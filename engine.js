@@ -23,6 +23,24 @@
   const elNotify = $("notify");
   const elHint   = $("hint");
 
+  /* ---- photographic scene backdrops (crossfaded per mood) ---- */
+  const PHOTO = {
+    dawn:1, river_day:1, river_night:1, apartment:1, nextdoor:1, bento:1,
+    school:1, lab:1, police:1, interrogation:1, cinema:1, snowroad:1,
+  };
+  const sceneLayers = [$("sceneA"), $("sceneB")];
+  let sceneIdx = 0, sceneCur = null;
+  function setScene(mood) {
+    const src = PHOTO[mood] ? "scenes/" + mood + ".jpg" : null;
+    if (src === sceneCur) return;
+    sceneCur = src;
+    const nxt = sceneLayers[1 - sceneIdx], cur = sceneLayers[sceneIdx];
+    if (src) { nxt.style.backgroundImage = "url('" + src + "')"; nxt.classList.add("show"); }
+    else { nxt.classList.remove("show"); }
+    cur.classList.remove("show");
+    sceneIdx = 1 - sceneIdx;
+  }
+
   /* ---- character sprite positions ---- */
   const POS = {
     c:   { left: "50%", scale: 1.0,  dim: false },
@@ -166,7 +184,7 @@
 
   /* ---- side effects of a node ---- */
   function applyEffects(n) {
-    if (n.mood) Atmos.setMood(n.mood);
+    if (n.mood) { Atmos.setMood(n.mood); setScene(n.mood); }
     if ("persp" in n) setPersp(n.persp);
     if (n.despawn)  despawn(n.despawn);
     if (n.despawn2) despawn(n.despawn2);

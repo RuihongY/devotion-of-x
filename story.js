@@ -633,6 +633,8 @@ const STORY = [
   { label: "credits" },
   { mood: "gears", persp: "", center: true,
     t: "{s+6}Devotion — Suspect X{/s}\n\n\nBased on the novel “The Devotion of Suspect X”\nby Keigo Higashino\n\nA non-commercial fan adaptation.\nAll text is an original rewrite." },
+  { mood: "gears", persp: "", center: true,
+    t: "{s-3}Scene photographs: Wikimedia Commons contributors,\ngraded for this project (see scenes/CREDITS.md).\nAtmosphere rendered with three.js.{/s}" },
   { cond: (s) => s.ending === "truth" && !s.insight, center: true,
     t: "Ending: the novel's ending\n\nOn your next walk, examine every clue on the embankment." },
   { cond: (s) => s.ending === "truth" && s.insight, center: true,

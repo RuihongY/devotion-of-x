@@ -48,6 +48,10 @@ const Atmos = (() => {
   const cur = mkVals(MOODS.void);
   const tgt = mkVals(MOODS.void);
 
+  // Abstract moods have no photo, so the three.js gradient sky is shown.
+  // Photographic moods hide the sky (sky:0) so the real scene shows through.
+  const ABSTRACT = new Set(["void", "gears", "rope", "greeting", "afterglow"]);
+
   function mkVals(m) {
     return {
       top: new THREE.Color(m.top), bot: new THREE.Color(m.bot),
@@ -56,7 +60,7 @@ const Atmos = (() => {
       dust: m.part[0] === "dust" ? m.part[1] : 0,
       gears: m.gears, glyphs: m.glyphs, water: m.water,
       glowC: new THREE.Color(m.glow.c), glowI: m.glow.i,
-      glowX: m.glow.x, glowY: m.glow.y, drift: m.drift,
+      glowX: m.glow.x, glowY: m.glow.y, drift: m.drift, sky: 1,
     };
   }
 
@@ -166,8 +170,9 @@ const Atmos = (() => {
 
   /* ---- init ------------------------------------------------------ */
   function init(canvas) {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);          // transparent: photo shows behind
     scene = new THREE.Scene();
     scene.fog = new THREE.Fog(cur.fog.getHex(), 20, 90);
     camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1000);
@@ -176,12 +181,12 @@ const Atmos = (() => {
 
     // gradient sky (large inverted sphere)
     skyMat = new THREE.ShaderMaterial({
-      side: THREE.BackSide, depthWrite: false, fog: false,
-      uniforms: { uTop: { value: cur.top.clone() }, uBot: { value: cur.bot.clone() } },
+      side: THREE.BackSide, depthWrite: false, fog: false, transparent: true,
+      uniforms: { uTop: { value: cur.top.clone() }, uBot: { value: cur.bot.clone() }, uOpacity: { value: 1 } },
       vertexShader: `varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
       fragmentShader: `
-        varying vec3 vP; uniform vec3 uTop,uBot;
-        void main(){ float h = normalize(vP).y*0.5+0.5; gl_FragColor=vec4(mix(uBot,uTop,pow(h,0.9)),1.0);}`,
+        varying vec3 vP; uniform vec3 uTop,uBot; uniform float uOpacity;
+        void main(){ float h = normalize(vP).y*0.5+0.5; gl_FragColor=vec4(mix(uBot,uTop,pow(h,0.9)), uOpacity);}`,
     });
     scene.add(new THREE.Mesh(new THREE.SphereGeometry(400, 32, 16), skyMat));
 
@@ -243,6 +248,7 @@ const Atmos = (() => {
   function setMood(name) {
     const m = MOODS[name] || MOODS.void;
     const v = mkVals(m);
+    v.sky = ABSTRACT.has(name) ? 1 : 0;    // hide gradient when a photo backs the scene
     Object.assign(tgt, v);
   }
 
@@ -267,10 +273,12 @@ const Atmos = (() => {
     cur.glowX += (tgt.glowX - cur.glowX) * k;
     cur.glowY += (tgt.glowY - cur.glowY) * k;
     cur.drift += (tgt.drift - cur.drift) * k;
+    cur.sky += (tgt.sky - cur.sky) * k;
 
     // sky + fog
     skyMat.uniforms.uTop.value.copy(cur.top);
     skyMat.uniforms.uBot.value.copy(cur.bot);
+    skyMat.uniforms.uOpacity.value = cur.sky;
     scene.fog.color.copy(cur.fog);
 
     // glow bloom
