@@ -465,6 +465,10 @@
 
   /* ── 夜晚循环 ─────────────────────────────── */
   function startLoop() {
+    // 安全网:存档里已有达成但未播放的结局(比如在00:42黑屏时关掉了页面),先补播
+    G.run = G.run || freshRun();
+    const pending = checkEnding();
+    if (pending) return playEnding(pending);
     G.run = freshRun();
     G.inReality = false;
     midnightPending = false;

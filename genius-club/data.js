@@ -120,8 +120,9 @@ const LOCATIONS = {
       "Where the dream begins each night. Outside the window: the city you could draw with your eyes closed."),
     actions: [
       { text: L("翻一翻手机", "Check your phone"), cost: 5, once: "phone",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("c07"), scene: "home_phone" },
-      { text: L("站在窗前看城市", "Watch the city from the window"), cost: 5, once: "window", scene: "home_window" },
+        hide: (G) => hasClue("c07"), scene: "home_phone" },
+      { text: L("站在窗前看城市", "Watch the city from the window"), cost: 5, once: "window",
+        seenKey: "seen_window", hide: (G) => !!G.meta.ms.seen_window, scene: "home_window" },
     ],
   },
   bank: {
@@ -152,7 +153,8 @@ const LOCATIONS = {
       { text: L("再买一份今天的报纸", "Buy today's paper again"), cost: 5, once: "paper2", req: ["d03"],
         hide: (G) => G.meta.chapter < 2 || hasClue("d09"), fresh: true, seenKey: "seen_paper2",
         scene: "store_paper2" },
-      { text: L("逗一逗老板的猫", "Play with the owner's cat"), cost: 5, once: "cat", scene: "store_cat" },
+      { text: L("逗一逗老板的猫", "Play with the owner's cat"), cost: 5, once: "cat",
+        hide: (G) => hasClue("c17") || (hasClue("c15") && !G.meta.butterfly.cat), scene: "store_cat" },
     ],
   },
   bookstore: {
@@ -160,7 +162,8 @@ const LOCATIONS = {
     desc: L("天街尽头的旧书店,开到很晚。店主对每一本书的位置都了如指掌。",
       "The secondhand bookstore at the end of Skystreet, open late. The keeper knows the place of every single book."),
     actions: [
-      { text: L("随便翻翻", "Browse the shelves"), cost: 10, once: "browse", scene: "book_browse" },
+      { text: L("随便翻翻", "Browse the shelves"), cost: 10, once: "browse",
+        seenKey: "seen_browse", hide: (G) => !!G.meta.ms.seen_browse, scene: "book_browse" },
       { text: L("查证报纸的疑点", "Chase the newspaper's oddity"), cost: 15, req: ["c07"], once: "history",
         hide: (G) => G.meta.chapter >= 2 && hasClue("c08"),
         fresh: true, seenKey: "seen_history", scene: "book_history" },
@@ -171,7 +174,8 @@ const LOCATIONS = {
     desc: L("夜间闭馆。铁门锁得死死的,门口保安亭还亮着灯。",
       "Closed at night. The iron gate is locked tight; the guard booth light is still on."),
     actions: [
-      { text: L("敲敲正门", "Knock on the front door"), cost: 5, once: "door", scene: "lib_door" },
+      { text: L("敲敲正门", "Knock on the front door"), cost: 5, once: "door",
+        seenKey: "seen_door", hide: (G) => !!G.meta.ms.seen_door, scene: "lib_door" },
       { text: L("从坏掉的后窗潜入", "Slip in through the broken rear window"), cost: 15, req: ["c08"], once: "sneak",
         hide: (G) => G.meta.chapter >= 2 && hasClue("c09"), scene: "lib_truth" },
       { text: L("从坏掉的后窗潜入", "Slip in through the broken rear window"), cost: 15, req: ["c17"], once: "sneak",
@@ -193,6 +197,7 @@ const LOCATIONS = {
         fresh: true, seenKey: "seen_talk", scene: "bar_talk" },
       { text: L("说服他:团结就是力量", "Convince him: strength in numbers"), cost: (G) => hasPerk("p_talk") ? 10 : 15,
         when: [0, 55], req: ["c04", "c16"], once: "persuaded",
+        hide: (G) => G.meta.chapter >= 2,
         fresh: true, seenKey: "seen_persuade", scene: "bar_persuade" },
       { text: L("问起他的父亲", "Ask about his father"), cost: 10, when: [0, 55], req: ["c04"], once: "askedDad",
         hide: (G) => G.meta.chapter < 2 || hasClue("d03"),
@@ -205,7 +210,7 @@ const LOCATIONS = {
       "A rusted fire escape climbs to the rooftop. The wind is fierce; you can see the bank's rear wall and a square air vent."),
     actions: [
       { text: L("在通风口旁守株待兔", "Wait in ambush by the vent"), cost: 10, when: [80, 148], req: ["c05"], once: "ccMet",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("d08"),
+        hide: (G) => G.meta.chapter >= 2,
         fresh: true, seenKey: "seen_cc", scene: "cc_talk" },
       { text: L("对她说出照片上的名字", "Say the name from the photograph"), cost: (G) => hasPerk("p_insight") ? 5 : 10,
         when: [80, 148], req: ["d07"], once: "ccMet",
@@ -222,9 +227,10 @@ const LOCATIONS = {
     actions: [
       { text: L("远远观察门禁", "Observe the gate from afar"), cost: 10, once: "watched", hide: (G) => hasClue("d02"),
         fresh: true, seenKey: "seen_gate", scene: "gate_watch" },
-      { text: L("硬闯试试", "Try to force your way in"), cost: 10, scene: "gate_force" },
+      { text: L("硬闯试试", "Try to force your way in"), cost: 10, seenKey: "seen_force",
+        hide: (G) => !!G.meta.ms.seen_force, scene: "gate_force" },
       { text: L("走密道潜入(CC带路)", "Take the hidden passage (CC leads)"), cost: 25, req: ["d08", "d09"], once: "sneaked",
-        fresh: true, seenKey: "seen_sneak", scene: "sneak" },
+        when: [0, 130], fresh: true, seenKey: "seen_sneak", scene: "sneak" },
     ],
   },
   oldhouse: {
@@ -244,8 +250,10 @@ const LOCATIONS = {
     desc: L("巨大的钟楼俯瞰全城。指针一格一格,走向那个你熟悉的时刻。",
       "The great clock tower overlooks the city. Tick by tick, the hands crawl toward the minute you know too well."),
     actions: [
-      { text: L("仰望钟楼", "Look up at the clock"), cost: 5, once: "clock", scene: "plaza_clock" },
-      { text: L("钻进后巷下水道", "Climb into the back-alley sewer"), cost: 10, once: "sewer", scene: "plaza_sewer" },
+      { text: L("仰望钟楼", "Look up at the clock"), cost: 5, once: "clock",
+        seenKey: "seen_clock", hide: (G) => !!G.meta.ms.seen_clock, scene: "plaza_clock" },
+      { text: L("钻进后巷下水道", "Climb into the back-alley sewer"), cost: 10, once: "sewer",
+        hide: (G) => hasClue("c14"), scene: "plaza_sewer" },
       { text: L("在观景台等到最后一刻", "Wait on the deck until the very end"), cost: 5, once: "doom", scene: "plaza_doom" },
     ],
   },
@@ -770,9 +778,6 @@ const SCENES = {
     { art: "🕳️" },
     { t: L("西三支线。CC在前面带路,手电的光斑贴着湿滑的管壁移动。\n尽头,一扇没有编号的铁门。她按了七下,门开了。",
         "West branch three. CC leads the way, her flashlight spot sliding along the slick tunnel wall.\nAt the end: an iron door with no number. She presses seven times. It opens.") },
-    { cond: (G) => G.run.flags.gangAlly, goto: "sneak_pick" },
-    { goto: "x1" },
-
     { label: "sneak_pick" },
     { menu: [
       { text: L("就我们两个,轻装潜入", "Just the two of us — go in light"), goto: "x1" },
