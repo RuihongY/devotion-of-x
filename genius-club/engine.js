@@ -425,9 +425,10 @@
     const lines = gained.length
       ? "今夜带回的情报:\n" + gained.map((id) => "· " + CLUES[id].name).join("\n")
       : "今夜没有带回新的情报。\n但你还记得每一条路——梦不会没收记忆。";
+    const hint = nextHint(G);
     showCard({
       big: "第 " + G.meta.loop + " 夜 · 完",
-      body: lines + "\n\n世界会重置,而你不会。",
+      body: lines + "\n\n世界会重置,而你不会。" + (hint ? "\n\n💡 " + hint : ""),
       onTap: () => {
         const ending = checkEnding();
         if (ending) return playEnding(ending);
@@ -438,15 +439,17 @@
 
   /* ── 现实幕 ───────────────────────────────── */
   function runReality() {
-    const idx = G.meta.reality;
-    const act = REALITY[idx];
-    if (act && act.unlock(G)) {
-      G.meta.reality++;
+    // 播放第一个“未播且已解锁”的现实幕——顺序不再阻塞:
+    // 某一幕(如需要支线情报的 R1)没解锁时,后面的幕照常可播
+    const act = REALITY.find((a) => !G.meta.realityDone.includes(a.scene) && a.unlock(G));
+    if (act) {
+      G.meta.realityDone.push(act.scene);
+      SAVE.save(G.meta);
       G.inReality = true;
       setPhase("scene");
       V.art.textContent = act.art || "🏢";
       runScene(act.scene, null);
-      // reality 场景以 {end:…} 节点结束并调用 finishReality
+      // reality 场景以 {end:…} 节点结束并调用 finishReality → 链式回到 runReality
     } else {
       nextNight();
     }

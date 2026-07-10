@@ -11,7 +11,8 @@
       newClues: [],       // 尚未在手册里查看过的情报 id
       ms: {},             // 剧情里程碑 flags(metCC / truth / invite / ccTalks 等)
       perks: [],          // 永久 perk id
-      reality: 0,         // 已播放到第几幕现实(REALITY 数组下标)
+      reality: 0,         // (旧字段,仅为兼容保留,引擎不再读取)
+      realityDone: [],    // 已播放的现实幕 scene id(如 "r0")
       endings: [],        // 已达成结局 id
       butterfly: {},      // 时空蝴蝶 flags(cat: 猫已命名莱茵)
     };
@@ -23,6 +24,10 @@
       if (!raw) return null;
       const d = JSON.parse(raw);
       if (!d || d.v !== 1) return null;
+      // 迁移旧档:早期版本用 reality 下标计数,换算成已播场景 id 列表
+      if (!Array.isArray(d.realityDone)) {
+        d.realityDone = ["r0", "r1", "r2", "r3", "r4", "r5"].slice(0, d.reality || 0);
+      }
       // 补齐字段,容忍旧档缺项
       return Object.assign(freshMeta(), d);
     } catch (e) {

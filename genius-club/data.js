@@ -530,7 +530,20 @@ const REALITY = [
   { scene: "r5", art: "✉️", unlock: (G) => !!G.meta.ms.invite },
 ];
 
-/* ── 结局(顺序即优先级) ── */
+/* ── 下一步提示(按主线链缺口,醒来结算卡上显示) ── */
+function nextHint(G) {
+  const has = (id) => G.meta.clues.includes(id);
+  if (G.meta.ms.invite) return null; // 主线已通
+  if (!has("c01")) return "再去经历一次那场劫案吧。";
+  if (!has("c02")) return "23:00 之前,银行大厅值得一逛。";
+  if (!has("c06")) return "23:00 之后,跟着劫案走到最深处。";
+  if (!has("c07")) return "梦里的报纸,你仔细读过吗?";
+  if (!has("c08")) return "旧书店,查得到很久以前的事。";
+  if (!has("c09")) return "图书馆的后窗,还开着。";
+  if (!has("c11")) return "23:30 的天台,有人从通风管里出来。";
+  if (!has("c12")) return "回到保险箱前——密码,你已经可以推理出来了。";
+  return "带着密码,回到保险箱前。";
+}
 const ENDINGS = [
   { id: "E3", title: "同行者", scene: "ending_e3", art: "🎭",
     cond: (G) => !!G.meta.ms.coopOpen,
