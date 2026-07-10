@@ -1,4 +1,4 @@
-/* 引擎 —— 相位状态机 / 时钟 / 场景VM / 情报系统 / UI 渲染
+/* 引擎 —— 相位状态机 / 时钟 / 场景VM / 情报系统 / UI 渲染 / 双语
  * 相位: title → scene(intro) → map ⇄ locPanel ⇄ scene → wake卡 → reality(scene) → map … → ending卡 */
 (function () {
   "use strict";
@@ -13,6 +13,87 @@
     jtabs: $("jtabs"), jlist: $("jlist"), toasts: $("toasts"),
     clock: $("clock"), timefill: $("timefill"), nightLabel: $("nightLabel"), journalBtn: $("journalBtn"),
   };
+
+  /* ── 语言 ─────────────────────────────────── */
+  const LANGKEY = "genius-club:lang";
+  let lang = "zh";
+  try { if (localStorage.getItem(LANGKEY) === "en") lang = "en"; } catch (e) {}
+  // L(z, e) 对象 → 当前语言字符串;普通字符串原样返回
+  const tr = (v) => (v && typeof v === "object" && v.z !== undefined) ? (lang === "en" ? v.e : v.z) : v;
+  window.tr = tr;
+
+  // UI 文案表
+  const UI = {
+    zh: {
+      night: (n) => "第 " + n + " 夜",
+      journal: "情报手册",
+      mapHint: (m) => "你在梦里。选择去处——距离 00:42 还有 " + m + " 分钟。",
+      here: "就在这里", dist: (m) => "路程 " + m + " 分", badgeNew: "新",
+      min: (m) => "-" + m + "分", missing: "缺情报:",
+      wait: "⏳ 原地等待", leave: "← 去别处",
+      tap: "点击继续",
+      doomBody: "天空像被烧穿的胶片一样卷起。\n楼宇折断,大地翻涌,声音消失了。\n\n——然后你睁开眼,回到自己的床上。\n枕边的闹钟显示:00:42。",
+      wakeBig: "梦醒",
+      dieBody: (r) => (r || "剧烈的疼痛袭来。") + "\n\n在梦里死亡,就会立刻醒来——这不是惩罚,只是另一种回家的方式。\n你躺在床上,心跳如鼓。记忆,还在。",
+      nightEnd: (n) => "第 " + n + " 夜 · 完",
+      gained: (list) => "今夜带回的情报:\n" + list.join("\n"),
+      gainedNone: "今夜没有带回新的情报。\n但你还记得每一条路——梦不会没收记忆。",
+      resetLine: "世界会重置,而你不会。",
+      newClue: "📖 新情报:", newPerk: "✨ 获得能力:",
+      nightfall: "夜幕降临",
+      nightfallBody: (fast) => "洗漱,关灯,躺平。\n你几乎是迫不及待地闭上了眼睛。\n\n" + (fast ? "(你学会了提前入梦:今夜多 10 分钟)" : "那个世界在等你。"),
+      cats: { "密码": "密码", "人物": "人物", "真相": "真相", "杂项": "杂项" },
+      jempty: "这一页还是空白。<br>去梦里多看、多听、多问。",
+      isNew: "●新",
+      ending: "结局",
+      contChap: (n) => "继续 · 进入第" + ["零", "一", "二", "三", "四", "五"][n] + "章",
+      backTitle: "回到标题",
+      titleH1: "梦醒00:42", titleSub: "天 才 俱 乐 部",
+      titleDesc: "从出生起,你每晚都会做同一个梦:同一座城市、同一天、同样在 00:42 毁灭。<br>梦里的一切都会重置——除了你的记忆。<br>用一夜一夜攒下的情报,撬开这个梦最深处的秘密。",
+      cont: (n) => "继续 · 第 " + n + " 夜",
+      restart: "从头开始", start: "入梦",
+      confirmReset: "清除全部记忆(情报/进度/结局)?此操作不可撤销。",
+      progress: "当前进度:", chap1: "第一章", chap2: "第二章 · 新东海市",
+      endingsGot: "已解锁结局:",
+      credit: "改编自小说《天才俱乐部》(城城与蝉) · 时间循环冒险",
+      langBtn: "Switch to English",
+    },
+    en: {
+      night: (n) => "Night " + n,
+      journal: "Journal",
+      mapHint: (m) => "You are in the dream. Choose a destination — " + m + " minutes until 00:42.",
+      here: "You are here", dist: (m) => m + " min away", badgeNew: "NEW",
+      min: (m) => "-" + m + "min", missing: "Requires: ",
+      wait: "⏳ Wait here", leave: "← Go elsewhere",
+      tap: "Tap to continue",
+      doomBody: "The sky curls up like burning film.\nTowers snap, the earth heaves, and all sound dies.\n\n— Then you open your eyes, back in your own bed.\nThe clock beside your pillow reads: 00:42.",
+      wakeBig: "Awake",
+      dieBody: (r) => (r || "Searing pain washes over you.") + "\n\nDying in the dream wakes you at once — not a punishment, just another way home.\nYou lie in bed, heart pounding. The memories remain.",
+      nightEnd: (n) => "Night " + n + " · End",
+      gained: (list) => "Intel brought back tonight:\n" + list.join("\n"),
+      gainedNone: "No new intel tonight.\nBut you still remember every road — the dream cannot confiscate memory.",
+      resetLine: "The world resets. You do not.",
+      newClue: "📖 New intel: ", newPerk: "✨ New ability: ",
+      nightfall: "Nightfall",
+      nightfallBody: (fast) => "Wash up, lights out, lie down.\nYou can hardly wait to close your eyes.\n\n" + (fast ? "(Early sleeper: +10 minutes tonight)" : "That world is waiting for you."),
+      cats: { "密码": "Codes", "人物": "People", "真相": "Truth", "杂项": "Misc" },
+      jempty: "This page is still blank.<br>Look, listen and ask more — in the dream.",
+      isNew: "●NEW",
+      ending: "Ending",
+      contChap: (n) => "Continue · Chapter " + n,
+      backTitle: "Back to title",
+      titleH1: "Awake at 00:42", titleSub: "T H E · G E N I U S · C L U B",
+      titleDesc: "Every night since birth, you dream the same dream: the same city, the same day, destroyed at 00:42.<br>Everything in the dream resets — except your memory.<br>Use intel gathered night after night to pry open the dream's deepest secret.",
+      cont: (n) => "Continue · Night " + n,
+      restart: "Start over", start: "Enter the dream",
+      confirmReset: "Erase all memory (intel / progress / endings)? This cannot be undone.",
+      progress: "Progress: ", chap1: "Chapter 1", chap2: "Chapter 2 · New Donghai City",
+      endingsGot: "Endings unlocked: ",
+      credit: "Adapted from the novel “The Genius Club” (Chengcheng Yu Chan) · a time-loop adventure",
+      langBtn: "切换为中文",
+    },
+  };
+  const T = () => UI[lang];
 
   /* ── 全局状态 ─────────────────────────────── */
   const G = {
@@ -40,7 +121,6 @@
 
   function nightBudget() { return CLOCK.total + (hasPerk("p_resolve") ? 10 : 0); }
   function fmtTime(t) {
-    // t 分钟自 22:00 起;perk 加的 10 分钟算提前入梦(21:50)
     let abs = 22 * 60 + t - (hasPerk("p_resolve") ? 10 : 0);
     abs = ((abs % 1440) + 1440) % 1440;
     const h = Math.floor(abs / 60), m = abs % 60;
@@ -51,7 +131,7 @@
   function toast(msg, warn) {
     const el = document.createElement("div");
     el.className = "toast" + (warn ? " warn" : "");
-    el.textContent = msg;
+    el.textContent = tr(msg);
     V.toasts.appendChild(el);
     setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 600); }, 3200);
   }
@@ -67,7 +147,7 @@
     const late = left <= 12; // 00:30 之后
     V.clock.classList.toggle("late", late);
     V.timefill.classList.toggle("late", late);
-    V.nightLabel.textContent = "第 " + (G.meta.loop + 1) + " 夜";
+    V.nightLabel.textContent = T().night(G.meta.loop + 1);
   }
 
   // 所有耗时的唯一入口。返回 false 表示已越过 00:42(本夜将被终结)
@@ -75,7 +155,6 @@
     if (G.inReality || G.run.ended) return true;
     const before = G.run.t;
     G.run.t = Math.min(G.run.t + min, nightBudget());
-    // 扫定时事件
     TIMED_EVENTS.forEach((ev, i) => {
       if (G.run.fired[i]) return;
       const at = ev.at + (hasPerk("p_resolve") ? 10 : 0);
@@ -99,24 +178,15 @@
     app.classList.add("shake");
     setTimeout(() => {
       app.classList.remove("shake");
-      showCard({
-        cls: "doom", big: "00:42",
-        body: "天空像被烧穿的胶片一样卷起。\n楼宇折断,大地翻涌,声音消失了。\n\n——然后你睁开眼,回到自己的床上。\n枕边的闹钟显示:00:42。",
-        onTap: wake,
-      });
+      showCard({ cls: "doom", big: "00:42", body: T().doomBody, onTap: wake });
     }, 650);
   }
-
   window.__midnight = forceMidnight;
 
   function die(reason) {
     if (G.run.ended) return;
     G.run.ended = true;
-    showCard({
-      cls: "doom", big: "梦醒",
-      body: (reason || "剧烈的疼痛袭来。") + "\n\n在梦里死亡,就会立刻醒来——这不是惩罚,只是另一种回家的方式。\n你躺在床上,心跳如鼓。记忆,还在。",
-      onTap: wake,
-    });
+    showCard({ cls: "doom", big: T().wakeBig, body: T().dieBody(tr(reason)), onTap: wake });
   }
   window.die = die;
 
@@ -137,7 +207,7 @@
     V.card.innerHTML =
       '<div class="big">' + (o.big || "") + "</div>" +
       '<div class="body">' + (o.body || "") + "</div>" +
-      '<div class="tap">点击继续</div>';
+      '<div class="tap">' + T().tap + "</div>";
     V.card.onclick = () => { V.card.className = ""; V.card.onclick = null; if (o.onTap) o.onTap(); };
   }
 
@@ -146,25 +216,26 @@
     if (!CLUES[id] || hasClue(id)) return;
     G.meta.clues.push(id);
     G.meta.newClues.push(id);
-    toast("📖 新情报:" + CLUES[id].name);
+    toast(T().newClue + tr(CLUES[id].name));
     V.journalBtn.classList.add("new");
     SAVE.save(G.meta);
   }
   window.grantClue = grantClue;
 
   /* ── 情报手册 ─────────────────────────────── */
-  const JCATS = ["密码", "人物", "真相", "杂项"];
+  const JCATS = ["密码", "人物", "真相", "杂项"]; // 内部分类键(展示时翻译)
   let jcat = "人物";
   function openJournal() {
     V.journal.classList.add("on");
     renderJournal();
   }
   function renderJournal() {
+    document.querySelector("#jhead h3").textContent = T().journal;
     V.jtabs.innerHTML = "";
     JCATS.forEach((c) => {
       const b = document.createElement("button");
       b.className = "jtab" + (c === jcat ? " cur" : "");
-      b.innerHTML = c + '<span class="dot"></span>';
+      b.innerHTML = T().cats[c] + '<span class="dot"></span>';
       if (G.meta.newClues.some((id) => CLUES[id] && CLUES[id].cat === c)) b.classList.add("new");
       b.onclick = () => { jcat = c; renderJournal(); };
       V.jtabs.appendChild(b);
@@ -172,19 +243,18 @@
     const items = G.meta.clues.filter((id) => CLUES[id] && CLUES[id].cat === jcat);
     V.jlist.innerHTML = "";
     if (!items.length) {
-      V.jlist.innerHTML = '<div class="jempty">这一页还是空白。<br>去梦里多看、多听、多问。</div>';
+      V.jlist.innerHTML = '<div class="jempty">' + T().jempty + "</div>";
     } else {
       items.forEach((id) => {
         const c = CLUES[id];
         const isNew = G.meta.newClues.includes(id);
         const div = document.createElement("div");
         div.className = "jitem";
-        div.innerHTML = '<div class="jname">' + c.name +
-          (isNew ? '<span class="nnew">●新</span>' : "") + "</div>" +
-          '<div class="jdesc">' + c.desc + "</div>";
+        div.innerHTML = '<div class="jname">' + tr(c.name) +
+          (isNew ? '<span class="nnew">' + T().isNew + "</span>" : "") + "</div>" +
+          '<div class="jdesc">' + tr(c.desc) + "</div>";
         V.jlist.appendChild(div);
       });
-      // 本分类标记已读
       G.meta.newClues = G.meta.newClues.filter((id) => !(CLUES[id] && CLUES[id].cat === jcat));
       SAVE.save(G.meta);
     }
@@ -195,9 +265,6 @@
   V.journal.onclick = (e) => { if (e.target === V.journal) V.journal.classList.remove("on"); };
 
   /* ── 场景 VM ──────────────────────────────── */
-  // 节点: {who,t} 对话 | {menu:[…]} 选项 | {grant} | {set} | {die} | {back} | {goto,label}
-  //       {art:"🏦"} 换场景表情 | {end:fn} 场景收尾回调
-  // 选项: {text, cost, req:[], hide:fn, grant, set, goto, die, back, lockText}
   let SC = { nodes: null, i: 0, onBack: null };
   let typing = null;
 
@@ -215,7 +282,6 @@
   }
 
   function step() {
-    // 时钟打断优先于一切
     if (midnightPending) return forceMidnight();
     if (G.run && G.run.ended && !G.inReality) return;
     if (SC.i >= SC.nodes.length) return backToLoc();
@@ -242,11 +308,10 @@
 
   function showLine(n) {
     V.choices.classList.remove("on");
-    V.dname.textContent = n.who || "";
+    V.dname.textContent = tr(n.who) || "";
     V.dname.style.display = n.who ? "block" : "none";
     V.dnext.style.visibility = "hidden";
-    const text = typeof n.t === "function" ? n.t(G) : n.t;
-    // 打字机
+    const text = tr(typeof n.t === "function" ? n.t(G) : n.t);
     let i = 0;
     V.dtext.textContent = "";
     clearInterval(typing);
@@ -267,7 +332,7 @@
     V.dbox.onclick = null;
     if (n.prompt) {
       V.dname.style.display = "none";
-      V.dtext.textContent = typeof n.prompt === "function" ? n.prompt(G) : n.prompt;
+      V.dtext.textContent = tr(typeof n.prompt === "function" ? n.prompt(G) : n.prompt);
       V.dnext.style.visibility = "hidden";
     }
     V.choices.innerHTML = "";
@@ -278,13 +343,12 @@
       const cost = typeof c.cost === "function" ? c.cost(G) : c.cost;
       const b = document.createElement("button");
       b.className = "choice";
-      let costTag = cost ? "-" + cost + "分" : "";
       if (missing.length) {
         b.classList.add("locked");
-        b.innerHTML = "<span>🔒 " + c.text + "</span>" +
-          '<span class="cost">缺情报:' + missing.map((id) => CLUES[id] ? CLUES[id].name : "???").join("、") + "</span>";
+        b.innerHTML = "<span>🔒 " + tr(c.text) + "</span>" +
+          '<span class="cost">' + T().missing + missing.map((id) => CLUES[id] ? tr(CLUES[id].name) : "???").join("、") + "</span>";
       } else {
-        b.innerHTML = "<span>" + c.text + "</span>" + (costTag ? '<span class="cost">' + costTag + "</span>" : "");
+        b.innerHTML = "<span>" + tr(c.text) + "</span>" + (cost ? '<span class="cost">' + T().min(cost) + "</span>" : "");
         b.onclick = () => {
           V.choices.classList.remove("on");
           if (cost) spend(cost);
@@ -304,7 +368,7 @@
 
   function backToLoc() {
     V.choices.classList.remove("on");
-    if (G.inReality) return; // reality 场景用自己的 end 回调收尾
+    if (G.inReality) return;
     if (G.run.ended) return;
     if (SC.onBack) { const f = SC.onBack; SC.onBack = null; return f(); }
     enterLocation(G.run.loc, true);
@@ -315,20 +379,20 @@
     setPhase("map");
     updateClockUI();
     const left = nightBudget() - G.run.t;
-    V.mapHint.textContent = "你在梦里。选择去处——距离 00:42 还有 " + left + " 分钟。";
+    V.mapHint.textContent = T().mapHint(left);
     V.locGrid.innerHTML = "";
     Object.keys(LOCATIONS).forEach((id) => {
-      const L = LOCATIONS[id];
-      if (L.hide && L.hide(G)) return;
+      const Lc = LOCATIONS[id];
+      if (Lc.hide && Lc.hide(G)) return;
       const here = id === G.run.loc;
       const cost = here ? 0 : travelCost();
       const div = document.createElement("div");
       div.className = "loc" + (here ? " here" : "");
       const reachable = left > cost;
       if (!reachable) div.classList.add("off");
-      div.innerHTML = '<div class="icon">' + L.icon + '</div><div class="lname">' + L.name +
-        '</div><div class="ldist">' + (here ? "就在这里" : "路程 " + cost + " 分") + "</div>";
-      if (hasNewAction(id)) div.innerHTML += '<div class="badge">新</div>';
+      div.innerHTML = '<div class="icon">' + Lc.icon + '</div><div class="lname">' + tr(Lc.name) +
+        '</div><div class="ldist">' + (here ? T().here : T().dist(cost)) + "</div>";
+      if (hasNewAction(id)) div.innerHTML += '<div class="badge">' + T().badgeNew + "</div>";
       div.onclick = () => {
         if (!here) { if (!spend(cost)) return forceMidnight(); }
         G.run.loc = id;
@@ -340,8 +404,8 @@
   window.renderMap = renderMap;
 
   function availActions(id) {
-    const L = LOCATIONS[id];
-    return L.actions.filter((a) => {
+    const Lc = LOCATIONS[id];
+    return Lc.actions.filter((a) => {
       if (a.hide && a.hide(G)) return false;
       if (a.once && G.run.flags[a.once]) return false;
       if (a.when) {
@@ -353,17 +417,16 @@
     });
   }
   function hasNewAction(id) {
-    // “新”角标:有可用且未上锁、且标记了 fresh 的行动(首次满足 req)
     return availActions(id).some((a) => a.fresh && (a.req || []).every(hasClue) && !(a.seenKey && G.meta.ms[a.seenKey]));
   }
 
   function enterLocation(id, noTravel) {
-    const L = LOCATIONS[id];
+    const Lc = LOCATIONS[id];
     setPhase("loc");
     updateClockUI();
     const acts = availActions(id);
-    let html = '<div id="locHead"><span class="icon">' + L.icon + "</span><h2>" + L.name + "</h2></div>" +
-      '<div id="locDesc">' + (typeof L.desc === "function" ? L.desc(G) : L.desc) + "</div>";
+    let html = '<div id="locHead"><span class="icon">' + Lc.icon + "</span><h2>" + tr(Lc.name) + "</h2></div>" +
+      '<div id="locDesc">' + tr(typeof Lc.desc === "function" ? Lc.desc(G) : Lc.desc) + "</div>";
     V.locPanel.innerHTML = html;
     acts.forEach((a) => {
       const missing = (a.req || []).filter((x) => !hasClue(x));
@@ -372,10 +435,10 @@
       const cost = typeof a.cost === "function" ? a.cost(G) : a.cost;
       if (missing.length) {
         b.classList.add("locked");
-        b.innerHTML = "<span>🔒 " + a.text + "</span>" +
-          '<span class="cost">缺情报:' + missing.map((x) => CLUES[x] ? CLUES[x].name : "???").join("、") + "</span>";
+        b.innerHTML = "<span>🔒 " + tr(a.text) + "</span>" +
+          '<span class="cost">' + T().missing + missing.map((x) => CLUES[x] ? tr(CLUES[x].name) : "???").join("、") + "</span>";
       } else {
-        b.innerHTML = "<span>" + a.text + "</span>" + (cost ? '<span class="cost">-' + cost + "分</span>" : "");
+        b.innerHTML = "<span>" + tr(a.text) + "</span>" + (cost ? '<span class="cost">' + T().min(cost) + "</span>" : "");
         b.onclick = () => {
           if (a.seenKey) { G.meta.ms[a.seenKey] = true; SAVE.save(G.meta); }
           if (a.once) G.run.flags[a.once] = true;
@@ -389,12 +452,12 @@
     });
     const wait = document.createElement("button");
     wait.className = "action leave";
-    wait.innerHTML = '<span>⏳ 原地等待</span><span class="cost">-15分</span>';
+    wait.innerHTML = "<span>" + T().wait + '</span><span class="cost">' + T().min(15) + "</span>";
     wait.onclick = () => { if (!spend(15)) return forceMidnight(); enterLocation(id, true); };
     V.locPanel.appendChild(wait);
     const back = document.createElement("button");
     back.className = "action leave";
-    back.innerHTML = "<span>← 去别处</span>";
+    back.innerHTML = "<span>" + T().leave + "</span>";
     back.onclick = renderMap;
     V.locPanel.appendChild(back);
   }
@@ -407,12 +470,10 @@
     midnightPending = false;
     updateClockUI();
     if (G.meta.loop === 0) {
-      // 首夜教学关:纯脚本
       setPhase("scene");
       V.art.textContent = "🌙";
       runScene("intro");
     } else if (G.meta.chapter >= 2 && !G.meta.ms.ch2Intro) {
-      // 第二章开场夜
       G.meta.ms.ch2Intro = true;
       SAVE.save(G.meta);
       setPhase("scene");
@@ -426,17 +487,16 @@
   window.startLoop = startLoop;
 
   function wake() {
-    // 结算
     G.meta.loop++;
     const gained = G.meta.newClues.slice();
     SAVE.save(G.meta);
     const lines = gained.length
-      ? "今夜带回的情报:\n" + gained.map((id) => "· " + CLUES[id].name).join("\n")
-      : "今夜没有带回新的情报。\n但你还记得每一条路——梦不会没收记忆。";
+      ? T().gained(gained.map((id) => "· " + tr(CLUES[id].name)))
+      : T().gainedNone;
     const hint = nextHint(G);
     showCard({
-      big: "第 " + G.meta.loop + " 夜 · 完",
-      body: lines + "\n\n世界会重置,而你不会。" + (hint ? "\n\n💡 " + hint : ""),
+      big: T().nightEnd(G.meta.loop),
+      body: lines + "\n\n" + T().resetLine + (hint ? "\n\n💡 " + tr(hint) : ""),
       onTap: () => {
         const ending = checkEnding();
         if (ending) return playEnding(ending);
@@ -447,8 +507,7 @@
 
   /* ── 现实幕 ───────────────────────────────── */
   function runReality() {
-    // 播放第一个“未播且已解锁”的现实幕——顺序不再阻塞:
-    // 某一幕(如需要支线情报的 R1)没解锁时,后面的幕照常可播
+    // 播放第一个“未播且已解锁”的现实幕——顺序不阻塞
     const act = REALITY.find((a) => !G.meta.realityDone.includes(a.scene) && a.unlock(G));
     if (act) {
       G.meta.realityDone.push(act.scene);
@@ -457,7 +516,6 @@
       setPhase("scene");
       V.art.textContent = act.art || "🏢";
       runScene(act.scene, null);
-      // reality 场景以 {end:…} 节点结束并调用 finishReality → 链式回到 runReality
     } else {
       nextNight();
     }
@@ -465,20 +523,20 @@
   function finishReality(perk) {
     if (perk && !hasPerk(perk)) {
       G.meta.perks.push(perk);
-      toast("✨ 获得能力:" + PERKS[perk]);
+      toast(T().newPerk + tr(PERKS[perk]));
     }
     SAVE.save(G.meta);
     G.inReality = false;
     const ending = checkEnding();
     if (ending) return playEnding(ending);
-    runReality(); // 链式播放:还有待解锁的现实幕就继续,否则入夜
+    runReality();
   }
   window.finishReality = finishReality;
 
   function nextNight() {
     showCard({
-      big: "夜幕降临",
-      body: "洗漱,关灯,躺平。\n你几乎是迫不及待地闭上了眼睛。\n\n" + (hasPerk("p_resolve") ? "(你学会了提前入梦:今夜多 10 分钟)" : "那个世界在等你。"),
+      big: T().nightfall,
+      body: T().nightfallBody(hasPerk("p_resolve")),
       onTap: startLoop,
     });
   }
@@ -493,81 +551,81 @@
   function playEnding(e) {
     G.meta.endings.push(e.id);
     SAVE.save(G.meta);
-    G.inReality = true; // 结局场景不受梦钟约束
+    G.inReality = true;
     setPhase("scene");
     V.art.textContent = e.art || "🃏";
     runScene(e.scene, null);
-    // 结局场景最后一个节点调用 endingCard(e)
   }
   window.endingCard = function (id) {
     const e = ENDINGS.find((x) => x.id === id);
-    // 章节结局:解锁下一章
     const unlocked = e.next && G.meta.chapter < e.next;
     if (unlocked) { G.meta.chapter = e.next; SAVE.save(G.meta); }
     const toTitle = () => { G.inReality = false; renderTitle(); setPhase("title"); };
 
     V.card.className = "on gold";
     V.card.innerHTML =
-      '<div class="big">' + e.title + "</div>" +
-      '<div class="body">' + e.epitaph +
-      "\n\n—— " + (e.chapterEnd || "结局") + " ——</div>";
+      '<div class="big">' + tr(e.title) + "</div>" +
+      '<div class="body">' + tr(e.epitaph) +
+      "\n\n—— " + (tr(e.chapterEnd) || T().ending) + " ——</div>";
     V.card.onclick = null;
     if (e.next) {
       const b = document.createElement("button");
       b.className = "btn primary";
       b.style.marginTop = "36px";
-      b.textContent = unlocked ? "继续 · 进入第" + numCN(e.next) + "章" : "继续 · 第" + numCN(e.next) + "章";
+      b.textContent = T().contChap(e.next);
       b.onclick = (ev) => { ev.stopPropagation(); V.card.className = ""; G.inReality = false; startLoop(); };
       V.card.appendChild(b);
       const t = document.createElement("button");
       t.className = "btn subtle";
-      t.textContent = "回到标题";
+      t.textContent = T().backTitle;
       t.onclick = (ev) => { ev.stopPropagation(); V.card.className = ""; toTitle(); };
       V.card.appendChild(t);
     } else {
       const tap = document.createElement("div");
       tap.className = "tap";
-      tap.textContent = "点击继续";
+      tap.textContent = T().tap;
       V.card.appendChild(tap);
       V.card.onclick = () => { V.card.className = ""; V.card.onclick = null; toTitle(); };
     }
   };
-
-  function numCN(n) { return ["零", "一", "二", "三", "四", "五"][n] || n; }
 
   /* ── 标题屏 ───────────────────────────────── */
   function renderTitle() {
     const has = G.meta.loop > 0 || G.meta.clues.length > 0;
     V.title.innerHTML =
       '<div class="t-clock">0 0 : 4 2</div>' +
-      "<h1>梦醒00:42</h1>" +
-      '<div class="sub">天 才 俱 乐 部</div>' +
-      '<div class="desc">从出生起,你每晚都会做同一个梦:同一座城市、同一天、同样在 00:42 毁灭。<br>' +
-      "梦里的一切都会重置——除了你的记忆。<br>用一夜一夜攒下的情报,撬开这个梦最深处的秘密。</div>";
+      "<h1>" + T().titleH1 + "</h1>" +
+      '<div class="sub">' + T().titleSub + "</div>" +
+      '<div class="desc">' + T().titleDesc + "</div>";
     if (has) {
-      const chapLabel = G.meta.chapter >= 2 ? "第二章 · 新东海市" : "第一章";
       const p = document.createElement("div");
       p.style.cssText = "font-size:13px;color:var(--gold);letter-spacing:.15em;margin-bottom:10px";
-      p.textContent = "当前进度:" + chapLabel;
+      p.textContent = T().progress + (G.meta.chapter >= 2 ? T().chap2 : T().chap1);
       V.title.appendChild(p);
-      addBtn("继续 · 第 " + (G.meta.loop + 1) + " 夜", "primary", () => startLoop());
-      addBtn("从头开始", "", () => {
-        if (confirm("清除全部记忆(情报/进度/结局)?此操作不可撤销。")) {
+      addBtn(T().cont(G.meta.loop + 1), "primary", () => startLoop());
+      addBtn(T().restart, "", () => {
+        if (confirm(T().confirmReset)) {
           SAVE.reset(); G.meta = SAVE.freshMeta(); renderTitle();
         }
       });
     } else {
-      addBtn("入梦", "primary", () => startLoop());
+      addBtn(T().start, "primary", () => startLoop());
     }
     if (G.meta.endings.length) {
       const d = document.createElement("div");
       d.style.cssText = "margin-top:14px;font-size:12px;color:var(--gold)";
-      d.textContent = "已解锁结局:" + G.meta.endings.map((id) => (ENDINGS.find((e) => e.id === id) || {}).title).join(" / ");
+      d.textContent = T().endingsGot + G.meta.endings.map((id) => tr((ENDINGS.find((e) => e.id === id) || {}).title)).join(" / ");
       V.title.appendChild(d);
     }
+    addBtn(T().langBtn, "subtle", () => {
+      lang = lang === "zh" ? "en" : "zh";
+      try { localStorage.setItem(LANGKEY, lang); } catch (e) {}
+      V.journalBtn.childNodes[0].textContent = T().journal;
+      renderTitle();
+    });
     const cr = document.createElement("div");
     cr.className = "credit";
-    cr.textContent = "改编自小说《天才俱乐部》(城城与蝉) · 时间循环冒险";
+    cr.textContent = T().credit;
     V.title.appendChild(cr);
 
     function addBtn(text, cls, fn) {
@@ -582,6 +640,7 @@
   /* ── 启动 ─────────────────────────────────── */
   function boot() {
     G.meta = SAVE.load() || SAVE.freshMeta();
+    V.journalBtn.childNodes[0].textContent = T().journal;
     renderTitle();
     setPhase("title");
     document.addEventListener("keydown", (e) => {
