@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>梦醒00:42 · 天才俱乐部</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131826;
+    --panel2: #1a2032;
+    --line: #2a3350;
+    --ink: #dde3f0;
+    --dim: #8a93ab;
+    --accent: #6ea8ff;
+    --gold: #e8c66a;
+    --danger: #ff5d6c;
+    --ok: #7ee0a3;
+  }
+  body.reality {
+    --bg: #171310;
+    --panel: #221c16;
+    --panel2: #2b241c;
+    --line: #4a3d2c;
+    --ink: #f0e8dd;
+    --dim: #ab9c8a;
+    --accent: #ffc46e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    font-size: 16px; line-height: 1.7;
+    overflow: hidden;
+    transition: background .8s;
+    user-select: none; -webkit-user-select: none;
+  }
+  #app { height: 100%; max-width: 860px; margin: 0 auto; position: relative; display: flex; flex-direction: column; }
+
+  /* ── 顶栏 ─────────────────────────── */
+  #topbar {
+    display: none; align-items: center; gap: 12px;
+    padding: 10px 14px; border-bottom: 1px solid var(--line);
+    background: var(--panel); z-index: 5;
+  }
+  #topbar.on { display: flex; }
+  #nightLabel { font-size: 14px; color: var(--dim); white-space: nowrap; }
+  #clock { font-size: 20px; font-variant-numeric: tabular-nums; letter-spacing: .06em; white-space: nowrap; }
+  #clock.late { color: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .45; } }
+  #timebar { flex: 1; height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; min-width: 40px; }
+  #timefill { height: 100%; width: 0%; background: var(--accent); border-radius: 3px; transition: width .4s; }
+  #timefill.late { background: var(--danger); }
+  #journalBtn {
+    position: relative; background: var(--panel2); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px;
+    font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+  #journalBtn .dot {
+    display: none; position: absolute; top: -4px; right: -4px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--danger);
+  }
+  #journalBtn.new .dot { display: block; }
+
+  /* ── 主区域 ───────────────────────── */
+  #main { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; -webkit-overflow-scrolling: touch; }
+
+  /* ── 标题屏 ───────────────────────── */
+  #title {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 24px; gap: 10px;
+    background:
+      radial-gradient(ellipse at 50% 120%, #1c2440 0%, transparent 60%),
+      radial-gradient(ellipse at 80% -10%, #14203a 0%, transparent 50%);
+  }
+  #title .t-clock { font-size: 15px; letter-spacing: .5em; color: var(--dim); margin-left: .5em; }
+  #title h1 { font-size: 44px; font-weight: 500; letter-spacing: .18em; margin: 4px 0 2px; text-shadow: 0 0 30px rgba(110,168,255,.35); }
+  #title .sub { font-size: 15px; color: var(--accent); letter-spacing: .3em; margin-left: .3em; }
+  #title .desc { max-width: 460px; font-size: 13px; color: var(--dim); margin: 22px 0 26px; line-height: 2; }
+  .btn {
+    display: block; width: 240px; padding: 12px; margin: 5px 0;
+    background: var(--panel2); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 10px;
+    font-size: 16px; letter-spacing: .1em; cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { border-color: var(--accent); background: #1c2a4a; }
+  .btn.subtle { font-size: 13px; color: var(--dim); border-color: transparent; background: transparent; width: auto; }
+  #title .credit { position: absolute; bottom: 16px; font-size: 11px; color: #566; letter-spacing: .08em; }
+
+  /* ── 地图 ─────────────────────────── */
+  #map { display: none; padding: 16px; }
+  #map.on { display: block; }
+  #mapHint { font-size: 13px; color: var(--dim); margin: 2px 2px 14px; }
+  #locGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .loc {
+    position: relative; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer;
+    transition: border-color .2s, transform .1s;
+  }
+  .loc:hover { border-color: var(--accent); }
+  .loc:active { transform: scale(.97); }
+  .loc .icon { font-size: 30px; line-height: 1.3; }
+  .loc .lname { font-size: 14px; margin-top: 4px; }
+  .loc .ldist { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .loc.here { border-color: var(--gold); box-shadow: 0 0 12px rgba(232,198,106,.15); }
+  .loc.here .ldist { color: var(--gold); }
+  .loc.off { opacity: .35; pointer-events: none; }
+  .loc .badge {
+    position: absolute; top: -6px; right: -6px; background: var(--danger); color: #fff;
+    font-size: 10px; padding: 2px 6px; border-radius: 8px; letter-spacing: .05em;
+  }
+
+  /* ── 地点面板 ─────────────────────── */
+  #locPanel { display: none; padding: 16px; }
+  #locPanel.on { display: block; }
+  #locHead { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  #locHead .icon { font-size: 30px; }
+  #locHead h2 { font-size: 22px; font-weight: 500; letter-spacing: .08em; }
+  #locDesc { font-size: 14px; color: var(--dim); margin-bottom: 16px; line-height: 1.9; }
+  .action {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; text-align: left;
+    background: var(--panel); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; margin: 8px 0; font-size: 15px; cursor: pointer;
+    transition: border-color .2s;
+  }
+  .action:hover { border-color: var(--accent); }
+  .action .cost { font-size: 12px; color: var(--dim); white-space: nowrap; }
+  .action.locked { opacity: .45; cursor: default; }
+  .action.locked:hover { border-color: var(--line); }
+  .action.leave { border-style: dashed; color: var(--dim); }
+
+  /* ── 场景(对话) ─────────────────── */
+  #sceneView { display: none; position: absolute; inset: 0; flex-direction: column; }
+  #sceneView.on { display: flex; }
+  #sceneArt {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 72px; opacity: .55; filter: saturate(.7);
+    background: radial-gradient(ellipse at 50% 30%, rgba(110,168,255,.07), transparent 65%);
+  }
+  #dialog {
+    background: linear-gradient(to top, var(--bg) 65%, transparent);
+    padding: 10px 18px 18px; min-height: 220px;
+  }
+  #dbox {
+    background: rgba(19,24,38,.92); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; min-height: 110px; cursor: pointer;
+  }
+  body.reality #dbox { background: rgba(34,28,22,.92); }
+  #dname { font-size: 13px; letter-spacing: .12em; color: var(--accent); margin-bottom: 6px; }
+  #dtext { font-size: 16px; line-height: 1.9; min-height: 60px; }
+  #dnext { text-align: right; font-size: 12px; color: var(--dim); animation: pulse 1.6s infinite; height: 16px; }
+  #choices { margin-top: 10px; display: none; flex-direction: column; gap: 8px; }
+  #choices.on { display: flex; }
+  .choice {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: var(--panel2); color: var(--ink); text-align: left;
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 11px 14px; font-size: 15px; cursor: pointer;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice .cost { font-size: 12px; color: var(--dim); white-space: nowrap; }
+  .choice.locked { opacity: .5; cursor: default; }
+  .choice.locked:hover { border-color: var(--line); }
+  .choice.locked .cost { color: var(--danger); }
+
+  /* ── 全屏卡片 ─────────────────────── */
+  #card {
+    display: none; position: fixed; inset: 0; z-index: 40;
+    background: var(--bg);
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 30px; cursor: pointer;
+  }
+  #card.on { display: flex; }
+  #card .big { font-size: 42px; letter-spacing: .2em; font-weight: 500; margin-bottom: 14px; white-space: pre-line; }
+  #card .body { max-width: 480px; font-size: 15px; color: var(--dim); line-height: 2.1; white-space: pre-line; }
+  #card .tap { margin-top: 40px; font-size: 12px; color: var(--dim); animation: pulse 1.6s infinite; }
+  #card.doom { background: #000; }
+  #card.doom .big { color: var(--danger); text-shadow: 0 0 40px rgba(255,93,108,.5); }
+  #card.gold .big { color: var(--gold); text-shadow: 0 0 40px rgba(232,198,106,.4); }
+
+  /* ── 白闪 & 震屏 ──────────────────── */
+  #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 60; }
+  #flash.go { animation: flashout 1s ease-out; }
+  @keyframes flashout { 0% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes shake {
+    0%,100% { transform: translate(0,0); } 20% { transform: translate(-8px,4px); }
+    40% { transform: translate(7px,-5px); } 60% { transform: translate(-5px,-4px); } 80% { transform: translate(4px,5px); }
+  }
+  #app.shake { animation: shake .5s linear 2; }
+
+  /* ── 情报手册 ─────────────────────── */
+  #journal {
+    display: none; position: fixed; inset: 0; z-index: 50;
+    background: rgba(5,7,12,.72); backdrop-filter: blur(4px);
+  }
+  #journal.on { display: flex; align-items: center; justify-content: center; }
+  #jpanel {
+    width: min(560px, 94vw); height: min(600px, 88vh);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  #jhead { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  #jhead h3 { font-size: 17px; letter-spacing: .15em; font-weight: 500; }
+  #jclose { background: none; border: none; color: var(--dim); font-size: 22px; cursor: pointer; }
+  #jtabs { display: flex; border-bottom: 1px solid var(--line); }
+  .jtab {
+    flex: 1; padding: 10px; background: none; border: none; color: var(--dim);
+    font-size: 14px; cursor: pointer; border-bottom: 2px solid transparent; position: relative;
+  }
+  .jtab.cur { color: var(--ink); border-bottom-color: var(--accent); }
+  .jtab .dot { position: absolute; top: 8px; right: 14px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); display: none; }
+  .jtab.new .dot { display: block; }
+  #jlist { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .jitem { border-bottom: 1px dashed var(--line); padding: 10px 2px; }
+  .jitem .jname { font-size: 15px; }
+  .jitem .jname .nnew { color: var(--danger); font-size: 11px; margin-left: 6px; }
+  .jitem .jdesc { font-size: 13px; color: var(--dim); margin-top: 3px; line-height: 1.8; }
+  .jempty { text-align: center; color: var(--dim); font-size: 13px; margin-top: 40px; line-height: 2; }
+
+  /* ── toast ────────────────────────── */
+  #toasts { position: fixed; top: 58px; left: 12px; z-index: 55; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast {
+    background: rgba(19,24,38,.95); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 9px 14px; font-size: 13px;
+    max-width: 78vw;
+    animation: toastin .3s ease-out;
+    box-shadow: 0 4px 18px rgba(0,0,0,.4);
+  }
+  .toast.warn { border-color: var(--danger); }
+  @keyframes toastin { from { opacity: 0; transform: translateX(-14px); } }
+  .toast.out { transition: opacity .5s; opacity: 0; }
+
+  @media (max-width: 640px) {
+    #locGrid { grid-template-columns: repeat(2, 1fr); }
+    #title h1 { font-size: 34px; }
+    #card .big { font-size: 30px; }
+    #dtext { font-size: 15px; }
+    #sceneArt { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="topbar">
+    <span id="nightLabel">第 1 夜</span>
+    <span id="clock">22:00</span>
+    <div id="timebar"><div id="timefill"></div></div>
+    <button id="journalBtn">情报手册<span class="dot"></span></button>
+  </div>
+  <div id="main">
+    <div id="title"></div>
+    <div id="map">
+      <div id="mapHint"></div>
+      <div id="locGrid"></div>
+    </div>
+    <div id="locPanel"></div>
+    <div id="sceneView">
+      <div id="sceneArt"></div>
+      <div id="dialog">
+        <div id="dbox">
+          <div id="dname"></div>
+          <div id="dtext"></div>
+          <div id="dnext">▼</div>
+        </div>
+        <div id="choices"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="card"></div>
+<div id="flash"></div>
+<div id="journal">
+  <div id="jpanel">
+    <div id="jhead"><h3>情报手册</h3><button id="jclose">×</button></div>
+    <div id="jtabs"></div>
+    <div id="jlist"></div>
+  </div>
+</div>
+<div id="toasts"></div>
+
+<script src="save.js"></script>
+<script src="data.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>
