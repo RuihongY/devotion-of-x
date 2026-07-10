@@ -15,6 +15,7 @@
       realityDone: [],    // 已播放的现实幕 scene id(如 "r0")
       endings: [],        // 已达成结局 id
       butterfly: {},      // 时空蝴蝶 flags(cat: 猫已命名莱茵)
+      chapter: 1,         // 已解锁的章节
     };
   }
 
@@ -27,6 +28,11 @@
       // 迁移旧档:早期版本用 reality 下标计数,换算成已播场景 id 列表
       if (!Array.isArray(d.realityDone)) {
         d.realityDone = ["r0", "r1", "r2", "r3", "r4", "r5"].slice(0, d.reality || 0);
+      }
+      // 迁移旧档:结局曾是终局设计,通关过第一章的玩家自动解锁第二章
+      if (!d.chapter) {
+        const es = d.endings || [];
+        d.chapter = (es.includes("E2") || es.includes("E3")) ? 2 : 1;
       }
       // 补齐字段,容忍旧档缺项
       return Object.assign(freshMeta(), d);

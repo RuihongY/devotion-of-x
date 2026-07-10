@@ -411,11 +411,19 @@
       setPhase("scene");
       V.art.textContent = "🌙";
       runScene("intro");
+    } else if (G.meta.chapter >= 2 && !G.meta.ms.ch2Intro) {
+      // 第二章开场夜
+      G.meta.ms.ch2Intro = true;
+      SAVE.save(G.meta);
+      setPhase("scene");
+      V.art.textContent = "🌙";
+      runScene("ch2_intro", renderMap);
     } else {
       V.art.textContent = "🌙";
       runScene("night_open", renderMap);
     }
   }
+  window.startLoop = startLoop;
 
   function wake() {
     // 结算
@@ -493,12 +501,39 @@
   }
   window.endingCard = function (id) {
     const e = ENDINGS.find((x) => x.id === id);
-    showCard({
-      cls: "gold", big: e.title,
-      body: e.epitaph + "\n\n—— 结局 " + (G.meta.endings.length) + " / " + ENDINGS.length + " ——",
-      onTap: () => { G.inReality = false; renderTitle(); setPhase("title"); },
-    });
+    // 章节结局:解锁下一章
+    const unlocked = e.next && G.meta.chapter < e.next;
+    if (unlocked) { G.meta.chapter = e.next; SAVE.save(G.meta); }
+    const toTitle = () => { G.inReality = false; renderTitle(); setPhase("title"); };
+
+    V.card.className = "on gold";
+    V.card.innerHTML =
+      '<div class="big">' + e.title + "</div>" +
+      '<div class="body">' + e.epitaph +
+      "\n\n—— " + (e.chapterEnd || "结局") + " ——</div>";
+    V.card.onclick = null;
+    if (e.next) {
+      const b = document.createElement("button");
+      b.className = "btn primary";
+      b.style.marginTop = "36px";
+      b.textContent = unlocked ? "继续 · 进入第" + numCN(e.next) + "章" : "继续 · 第" + numCN(e.next) + "章";
+      b.onclick = (ev) => { ev.stopPropagation(); V.card.className = ""; G.inReality = false; startLoop(); };
+      V.card.appendChild(b);
+      const t = document.createElement("button");
+      t.className = "btn subtle";
+      t.textContent = "回到标题";
+      t.onclick = (ev) => { ev.stopPropagation(); V.card.className = ""; toTitle(); };
+      V.card.appendChild(t);
+    } else {
+      const tap = document.createElement("div");
+      tap.className = "tap";
+      tap.textContent = "点击继续";
+      V.card.appendChild(tap);
+      V.card.onclick = () => { V.card.className = ""; V.card.onclick = null; toTitle(); };
+    }
   };
+
+  function numCN(n) { return ["零", "一", "二", "三", "四", "五"][n] || n; }
 
   /* ── 标题屏 ───────────────────────────────── */
   function renderTitle() {
@@ -510,6 +545,11 @@
       '<div class="desc">从出生起,你每晚都会做同一个梦:同一座城市、同一天、同样在 00:42 毁灭。<br>' +
       "梦里的一切都会重置——除了你的记忆。<br>用一夜一夜攒下的情报,撬开这个梦最深处的秘密。</div>";
     if (has) {
+      const chapLabel = G.meta.chapter >= 2 ? "第二章 · 新东海市" : "第一章";
+      const p = document.createElement("div");
+      p.style.cssText = "font-size:13px;color:var(--gold);letter-spacing:.15em;margin-bottom:10px";
+      p.textContent = "当前进度:" + chapLabel;
+      V.title.appendChild(p);
       addBtn("继续 · 第 " + (G.meta.loop + 1) + " 夜", "primary", () => startLoop());
       addBtn("从头开始", "", () => {
         if (confirm("清除全部记忆(情报/进度/结局)?此操作不可撤销。")) {
