@@ -118,7 +118,7 @@ const TIMED_EVENTS = [
 /* ── 地点 ── */
 const LOCATIONS = {
   home: {
-    name: L("梦中公寓", "Dream Apartment"), icon: "🛏️",
+    name: L("梦中公寓", "Dream Apartment"), icon: "🛏️", mood: "street",
     desc: L("每晚梦境开始的地方。窗外是那座你闭着眼都能画出来的城市。",
       "Where the dream begins each night. Outside the window: the city you could draw with your eyes closed."),
     actions: [
@@ -129,7 +129,7 @@ const LOCATIONS = {
     ],
   },
   bank: {
-    name: L("中央银行", "Central Bank"), icon: "🏦",
+    name: L("中央银行", "Central Bank"), icon: "🏦", mood: "bank",
     desc: (G) => CH(G) >= 2
       ? L("请柬已经到手,金库的故事翻篇了。营业大厅的灯,还是老样子亮着。",
           "The invitation is yours; the vault's story has turned its page. The lobby lights burn on as always.")
@@ -148,7 +148,7 @@ const LOCATIONS = {
     ],
   },
   store: {
-    name: L("便利店", "Convenience Store"), icon: "🏪",
+    name: L("便利店", "Convenience Store"), icon: "🏪", mood: "street",
     desc: L("二十四小时营业。老板永远在柜台后打同一局手机游戏。",
       "Open 24 hours. The owner is forever behind the counter, playing the same round of the same phone game."),
     actions: [
@@ -162,7 +162,7 @@ const LOCATIONS = {
     ],
   },
   bookstore: {
-    name: L("旧书店", "Old Bookstore"), icon: "📚",
+    name: L("旧书店", "Old Bookstore"), icon: "📚", mood: "lib",
     desc: L("天街尽头的旧书店,开到很晚。店主对每一本书的位置都了如指掌。",
       "The secondhand bookstore at the end of Skystreet, open late. The keeper knows the place of every single book."),
     actions: [
@@ -174,7 +174,7 @@ const LOCATIONS = {
     ],
   },
   library: {
-    name: L("市立图书馆", "City Library"), icon: "🏛️",
+    name: L("市立图书馆", "City Library"), icon: "🏛️", mood: "lib",
     desc: L("夜间闭馆。铁门锁得死死的,门口保安亭还亮着灯。",
       "Closed at night. The iron gate is locked tight; the guard booth light is still on."),
     actions: [
@@ -190,7 +190,7 @@ const LOCATIONS = {
     ],
   },
   bar: {
-    name: L("蓝鸟酒吧", "Bluebird Bar"), icon: "🍺",
+    name: L("蓝鸟酒吧", "Bluebird Bar"), icon: "🍺", mood: "bar",
     desc: L("烟雾和劣质威士忌的味道。最里面的卡座,坐着几个压低帽檐的男人。",
       "Smoke and cheap whiskey. In the back booth sit several men with their caps pulled low."),
     actions: [
@@ -209,7 +209,7 @@ const LOCATIONS = {
     ],
   },
   rooftop: {
-    name: L("后巷 · 天台", "Back Alley · Rooftop"), icon: "🌃",
+    name: L("后巷 · 天台", "Back Alley · Rooftop"), icon: "🌃", mood: "roof",
     desc: L("锈蚀的消防梯一路通向天台。风很大,能望见银行的后墙和一个方形的通风口。",
       "A rusted fire escape climbs to the rooftop. The wind is fierce; you can see the bank's rear wall and a square air vent."),
     actions: [
@@ -224,7 +224,7 @@ const LOCATIONS = {
   },
   /* —— 第二章新地点 —— */
   newcity: {
-    name: L("新东海市 · 关卡", "New Donghai · Checkpoint"), icon: "🏙️",
+    name: L("新东海市 · 关卡", "New Donghai · Checkpoint"), icon: "🏙️", mood: "city",
     hide: (G) => CH(G) < 2,
     desc: L("高墙在夜色里泛着冷光,墙内的天际线比外面高出一整个时代。哨卡的白衣人一动不动,像一排雕塑。",
       "The wall gleams cold in the night; the skyline within stands a whole era taller. The men in white at the gate never move — a row of statues."),
@@ -238,7 +238,7 @@ const LOCATIONS = {
     ],
   },
   oldhouse: {
-    name: L("大脸猫老宅", "Bigface's Old House"), icon: "🏚️",
+    name: L("大脸猫老宅", "Bigface's Old House"), icon: "🏚️", mood: "house",
     hide: (G) => CH(G) < 2 || !hasClue("d03"),
     desc: L("城郊的老房子,院门虚掩。信箱里塞满没人取的传单,门牌被雨水泡得发白。",
       "An old house on the city's edge, its gate ajar. The mailbox overflows with unclaimed flyers; rain has bleached the number plate white."),
@@ -250,7 +250,7 @@ const LOCATIONS = {
     ],
   },
   plaza: {
-    name: L("城市广场 · 钟楼", "City Plaza · Clock Tower"), icon: "🕐",
+    name: L("城市广场 · 钟楼", "City Plaza · Clock Tower"), icon: "🕐", mood: "plaza",
     desc: L("巨大的钟楼俯瞰全城。指针一格一格,走向那个你熟悉的时刻。",
       "The great clock tower overlooks the city. Tick by tick, the hands crawl toward the minute you know too well."),
     actions: [
@@ -279,11 +279,11 @@ const SCENES = {
     { t: L("一个满脸横肉的男人搂住你的肩膀。面具是只二次元猫,道上人称——大脸猫。\n今晚你心血来潮想换个剧本,就顺着他之前认错人的话头应了下来。",
         "A heavyset man throws an arm around your shoulder. The mask is a cartoon cat; the street calls him Bigface.\nTonight you feel like a different script, so you play along with his mistaken identity.") },
     { art: "🏦" },
-    { t: L("银行后门。放风的小弟刚比出OK的手势——\n嘭!!大脸猫一枪把他放倒了。",
+    { fx: "bang", t: L("银行后门。放风的小弟刚比出OK的手势——\n嘭!!大脸猫一枪把他放倒了。",
         "The bank's back door. The lookout flashes an OK sign —\nBANG!! Bigface drops him with one shot.") },
     { who: L("大脸猫", "Bigface"), t: L("这人手脚不干净,留不得!少个人分钱,你该高兴啊老弟!",
         "That one had sticky fingers. Couldn't keep him! One less cut of the money — you should be happy, kid!") },
-    { t: L("往里走,配电箱前的小弟刚剪断警报线——嘭!!又是一枪。\n“这个嘛,他勾引你嫂子。”大脸猫解释得理直气壮。",
+    { fx: "bang", t: L("往里走,配电箱前的小弟刚剪断警报线——嘭!!又是一枪。\n“这个嘛,他勾引你嫂子。”大脸猫解释得理直气壮。",
         "Further in, another crew member snips the alarm wire — BANG!! Another shot.\n“That one? He flirted with your sister-in-law.” Bigface explains it like a righteous man.") },
     { t: L("他从腰后掏出一坨胶布缠着的灰色物体塞给你:“C4。你要是觉得哥想黑吃黑,就按下开关跟哥同归于尽。这下放心了吧?”\n……这大哥的脑回路,还挺坦荡。",
         "He pulls a tape-wrapped gray lump from his belt and shoves it at you. “C4. If you ever think I'm double-crossing you, hit the switch and take us both out. Feel safe now?”\n…You have to admire the honesty of his logic.") },
@@ -301,7 +301,7 @@ const SCENES = {
     { t: L("你把C4拍在门上撒腿就跑。身后传来大脸猫撕心裂肺的一声“Shift——!”",
         "You slap the C4 onto the door and bolt. Behind you, Bigface lets out a soul-rending “Shift——!!”") },
     { grant: "c01" },
-    { t: L("轰!!!!!\n气浪掀飞了半面墙。在意识涣散前,你听见警报声、警笛声——\n还有一个女人隔着硝烟的怒骂。",
+    { fx: "boom", t: L("轰!!!!!\n气浪掀飞了半面墙。在意识涣散前,你听见警报声、警笛声——\n还有一个女人隔着硝烟的怒骂。",
         "BOOM!!!!!\nThe blast takes out half the wall. As your mind scatters you hear alarms, sirens —\nand a woman cursing through the smoke.") },
     { die: L("数不清的砖块砸在身上。", "Countless bricks come down on you.") },
 
@@ -309,13 +309,13 @@ const SCENES = {
     { t: L("你在键盘上敲下自己的生日。\n——嘀。红灯。\n再试一遍。还是红灯。",
         "You key in your own birthday.\n— Beep. Red light.\nAgain. Red light.") },
     { grant: "c01" },
-    { t: L("咔。清脆的电流声——主电路恢复了。\n呜哇!呜哇!警报炸响。大脸猫的脸比面具还扭曲。",
+    { fx: "alarm", t: L("咔。清脆的电流声——主电路恢复了。\n呜哇!呜哇!警报炸响。大脸猫的脸比面具还扭曲。",
         "Click. A crisp electric hum — main power is back.\nWEE-OO! WEE-OO! The alarms detonate. Bigface's face twists worse than his mask.") },
     { art: "🎭" },
-    { t: L("黑暗里走出一个戴白色面具的蒙面女人,手枪稳稳指着你们。\n嘭。大脸猫连一句遗言都没来得及说。",
+    { fx: "bang", t: L("黑暗里走出一个戴白色面具的蒙面女人,手枪稳稳指着你们。\n嘭。大脸猫连一句遗言都没来得及说。",
         "Out of the dark steps a masked woman in white, pistol rock-steady on you both.\nBang. Bigface doesn't even get his last words out.") },
     { who: "CC", t: L("……林弦?", "…Lin Xian?") },
-    { t: L("她居然叫出了你的名字。枪口对着你,却迟迟没有扣下。\n就在这时,破门锤砸开了金库外门——特警攻入,枪声大作。",
+    { fx: "sirens", t: L("她居然叫出了你的名字。枪口对着你,却迟迟没有扣下。\n就在这时,破门锤砸开了金库外门——特警攻入,枪声大作。",
         "She knows your name. Her muzzle is on you, but her finger won't close.\nThen a ram smashes the vault's outer door — SWAT pours in, gunfire everywhere.") },
     { die: L("视野的最后,是她转身钻进通风管的背影。", "The last thing you see is her back, vanishing into the air duct.") },
   ],
@@ -373,7 +373,7 @@ const SCENES = {
   bank_vault: [
     { art: "🏦" },
     { cond: (G) => G.run.flags.heistStarted,
-      t: L("劫案的枪声就是最好的掩护。你贴着墙根,从侧门的监控盲区滑进去,直下地下二层。",
+      fx: "sirens", t: L("劫案的枪声就是最好的掩护。你贴着墙根,从侧门的监控盲区滑进去,直下地下二层。",
         "The heist's gunfire is the best cover there is. You hug the wall, slide through the side door's blind spot, straight down to basement two.") },
     { cond: (G) => !G.run.flags.heistStarted,
       t: L("换班的间隙,你从侧门的监控盲区溜进去,直下地下二层。走廊里安静得能听见自己的心跳。",
@@ -429,7 +429,7 @@ const SCENES = {
 
     { label: "open" },
     { art: "✉️" },
-    { t: L("2、6、2、4、0、0、4、2。\n——咔哒。\n绿灯。箱门弹开的瞬间,你听见了自己的心跳。",
+    { fx: "glow", t: L("2、6、2、4、0、0、4、2。\n——咔哒。\n绿灯。箱门弹开的瞬间,你听见了自己的心跳。",
         "2, 6, 2, 4, 0, 0, 4, 2.\n— Click.\nGreen light. The instant the door springs open, you hear your own heart.") },
     { t: L("箱子里没有钱,没有金条。\n只有一张暗红色的卡片,烫金的四个字:天才俱乐部。",
         "No money inside. No gold.\nOnly a dark red card, four gilt characters: The Genius Club.") },
@@ -444,9 +444,9 @@ const SCENES = {
     { art: "🔥" },
     { t: L("23:40,通风管垂下绳索。CC、大脸猫,还有三个“今晚没有被处决”的小弟,把两只钢瓶一寸一寸吊进金库。",
         "23:40. Ropes drop from the air duct. CC, Bigface, and three crew members who were not executed tonight lower two steel tanks into the vault, inch by inch.") },
-    { t: L("点火。3000℃的白炽火焰贴上箱体,钢板像黄油一样卷开,火花溅了一地。\n大脸猫盯着切开的缺口,呼吸都停了。",
+    { fx: "sparks", t: L("点火。3000℃的白炽火焰贴上箱体,钢板像黄油一样卷开,火花溅了一地。\n大脸猫盯着切开的缺口,呼吸都停了。",
         "Ignition. The 3000°C white flame kisses the steel; the plate curls open like butter, sparks sheeting to the floor.\nBigface stares at the widening cut and forgets to breathe.") },
-    { t: L("暗红色的卡片躺在里面。烫金的四个字:天才俱乐部。\n这个满手血腥的男人,隔着面具哭出了声——为了他的女儿。",
+    { fx: "glow", t: L("暗红色的卡片躺在里面。烫金的四个字:天才俱乐部。\n这个满手血腥的男人,隔着面具哭出了声——为了他的女儿。",
         "The dark red card lies within. Four gilt characters: The Genius Club.\nThe man with blood on his hands weeps aloud behind his mask — for his daughter.") },
     { who: "CC", t: L("……原来一个人是打不开的。这么多年,我居然没想过“人手”这个答案。",
         "…So it never could be opened alone. All these years, and “more hands” was the answer I never once considered.") },
@@ -457,7 +457,7 @@ const SCENES = {
 
     { label: "slack" },
     { art: "💰" },
-    { t: L("你把成捆的钞票往包里塞,塞满了就往地上撒,撒累了就躺在钱堆里。\n反正带不回去。反正明晚还有。",
+    { fx: "glow", t: L("你把成捆的钞票往包里塞,塞满了就往地上撒,撒累了就躺在钱堆里。\n反正带不回去。反正明晚还有。",
         "You stuff bundles of cash into a bag; when it's full you throw the rest in the air, and when you're tired you lie down in the pile.\nNone of it comes home anyway. There'll be more tomorrow night anyway.") },
     { t: L("既然已经知道这个梦是什么,那答案还重要吗?\n躺平,也是一种选择……吧。",
         "Now that you know what this dream is — do the answers even matter?\nCoasting is a choice too… right?") },
@@ -490,7 +490,7 @@ const SCENES = {
         "The white cat perches on the register, tail flicking.\n“What's her name?” you ask, as casually as you can manage.") },
     { who: L("便利店老板", "Shopkeeper"), t: L("莱茵。怎么了?", "Rhein. Why?") },
     { set: (G) => { G.meta.ms.sawBfly = true; SAVE.save(G.meta); } },
-    { t: L("你的汗毛瞬间立了起来。\n昨天。就在昨天的现实里,是你亲手把那幅猫的画像命名为“莱茵”。\n而这个“六百年后”的梦,一夜之间,跟着变了。",
+    { fx: "glitch", em: "danger", t: L("你的汗毛瞬间立了起来。\n昨天。就在昨天的现实里,是你亲手把那幅猫的画像命名为“莱茵”。\n而这个“六百年后”的梦,一夜之间,跟着变了。",
         "Every hair on your body stands up.\nYesterday. Just yesterday, in reality, you yourself named that cat sketch “Rhein.”\nAnd this dream — six hundred years downstream — changed overnight to match.") },
     { grant: "c17" },
     { grant: "c15" },
@@ -540,7 +540,7 @@ const SCENES = {
     { t: L("编年史区。你抽出最新的一册《城市编年史》,直接翻到最后一页——",
         "The annals section. You pull the newest volume of the City Annals and flip straight to the last page —") },
     { art: "🕮" },
-    { t: L("“本卷修至今年:2624年。”", "“This volume is current to the present year: 2624.”") },
+    { fx: "glitch", em: "danger", t: L("“本卷修至今年:2624年。”", "“This volume is current to the present year: 2624.”") },
     { t: L("2624。\n不是幻觉,不是脑补,白纸黑字。\n你做了二十多年的这个梦——是六百年后的、真实的未来。",
         "2624.\nNot a hallucination. Not your imagination. Black ink on white paper.\nThe dream you've dreamed for twenty-odd years — is the real future, six hundred years from now.") },
     { grant: "c09" },
@@ -668,7 +668,7 @@ const SCENES = {
     { t: L("23:30,格栅准时滑开。她落地,看到你,已经懒得叹气了。\n“又来?这次想问什……”",
         "23:30. The grille slides open on schedule. She lands, sees you, and can't even muster a sigh.\n“Again? What is it this ti—”") },
     { t: L("“VV。”\n你只说了两个字母。", "“VV.”\nYou say only the two letters.") },
-    { t: L("风声里,世界静了三秒。\n她的手扣在了枪柄上——不是杀意,是失控。面具后的呼吸乱得像溺水的人。",
+    { fx: "glitch", t: L("风声里,世界静了三秒。\n她的手扣在了枪柄上——不是杀意,是失控。面具后的呼吸乱得像溺水的人。",
         "In the wind, the world goes silent for three seconds.\nHer hand locks onto the pistol grip — not intent to kill, but loss of control. Behind the mask her breathing is that of someone drowning.") },
     { who: "CC", t: L("“……你从哪里,听到这个名字。”", "“…Where did you hear that name.”") },
     { t: L("你把照片递过去。她接照片的手,在抖。\n很久很久,她把照片还给你,声音哑得不像她:\n“问吧。今晚,你问什么我都答。”",
@@ -723,12 +723,12 @@ const SCENES = {
     { art: "✉️" },
     { t: L("同一组密码。咔哒。\n请柬还躺在原处——但这一次,你注意到了别的东西:箱底的衬板,有一角微微翘起。",
         "The same code. Click.\nThe invitation lies where it lay — but this time you notice something else: one corner of the base panel, ever so slightly lifted.") },
-    { t: L("夹层里是一张老照片。\n长发、大胡子的中年男人,站在一面写满公式的白板前。照片背面,只有两个字母:\nVV。",
+    { fx: "reveal", fxArg: "🖼️", t: L("夹层里是一张老照片。\n长发、大胡子的中年男人,站在一面写满公式的白板前。照片背面,只有两个字母:\nVV。",
         "In the false bottom: an old photograph.\nA long-haired, bearded man stands before a whiteboard dense with formulas. On the back, just two letters:\nVV.") },
-    { t: L("你把照片凑到应急灯下,心脏漏跳了一拍。\n这个男人的侧脸——像极了你自己。",
+    { fx: "glitch", em: "danger", t: L("你把照片凑到应急灯下,心脏漏跳了一拍。\n这个男人的侧脸——像极了你自己。",
         "You hold the photo up to the emergency light, and your heart skips.\nThe man's profile — is unmistakably your own.") },
     { grant: "d07" },
-    { t: L("而请柬的背面,不知何时浮出一行烫金小字,像是遇热显影的墨:\n「新东海市」。\n城东那座高墙环绕的城中之城。你在这个梦里晃荡了二十多年,从没进去过。",
+    { fx: "glow", t: L("而请柬的背面,不知何时浮出一行烫金小字,像是遇热显影的墨:\n「新东海市」。\n城东那座高墙环绕的城中之城。你在这个梦里晃荡了二十多年,从没进去过。",
         "And on the invitation's back, gilt letters have surfaced like heat-developed ink:\n“New Donghai City.”\nThe walled city-within-a-city in the east. Twenty-odd years wandering this dream, and you've never once been inside.") },
     { grant: "d01" },
     { menu: [
@@ -748,9 +748,10 @@ const SCENES = {
   gate_force: [
     { art: "🏙️" },
     { t: L("你深吸一口气,翻过栏杆,朝墙内狂奔——", "You take a deep breath, vault the railing, and sprint for the wall —") },
-    { t: L("视野忽然倒转。你甚至没看清他们是怎么出手的。\n白衣人把你轻轻放在街角,像放一件易碎品。其中一个俯下身,隔着口罩,极轻地说了一句:",
+    { fx: "whiteout", t: L("视野忽然倒转。你甚至没看清他们是怎么出手的。\n白衣人把你轻轻放在街角,像放一件易碎品。其中一个俯下身,隔着口罩,极轻地说了一句:",
         "The world flips. You never even see them move.\nThe men in white set you down on the corner, gently, like fragile freight. One bends close and, through his mask, says very softly:") },
-    { who: L("白衣人", "Man in White"), t: L("“回去吧,林先生。还不到时候。”", "“Go home, Mr. Lin. It is not yet time.”") },
+    { em: "whisper", who: L("白衣人", "Man in White"), t: L("“回去吧,林先生。还不到时候。”", "“Go home, Mr. Lin. It is not yet time.”") },
+    { fx: "glitch" },
     { die: L("他们知道你的名字。这个认知比任何暴力都更让你窒息——意识,在震惊中沉了下去。",
         "They know your name. The realization suffocates worse than any violence — and your consciousness sinks under the shock.") },
   ],
@@ -790,6 +791,7 @@ const SCENES = {
 
     { label: "x1" },
     { art: "🏙️" },
+    { mood: "city" },
     { t: L("墙内的新东海市,安静得像一座实验室。\n街道一尘不染,路灯的光是冷白色的,每一栋楼都在最恰当的位置——恰当得,不像人住的地方。",
         "Inside the wall, New Donghai City is quiet as a laboratory.\nStreets spotless, lamplight a cold white, every building in exactly the right place — so right, it doesn't feel like anywhere people live.") },
     { t: L("CC领着你贴墙前行,停在一栋亮灯的大楼外。\n铭牌:学术交流中心。今天,是论坛的日子。",
@@ -798,7 +800,7 @@ const SCENES = {
         "Through the vast floor-to-ceiling window you see the conference room —\nwhiteboards covered in 42s.\nExactly like the walls of the old house.") },
     { t: L("白板前站着一个背对着你的男人。长发,披肩。\n他在讲话。声音透过玻璃传来,很模糊——\n但你还是听清了。",
         "Before the whiteboards stands a man with his back to you. Long hair, past his shoulders.\nHe is speaking. Through the glass the voice is muffled —\nbut you make it out all the same.") },
-    { t: L("因为那个声音,\n和你的,一模一样。", "Because that voice\nis exactly, precisely, your own.") },
+    { fx: "glitch", em: "voice", t: L("因为那个声音,\n和你的,一模一样。", "Because that voice\nis exactly, precisely, your own.") },
     { set: (G) => { G.meta.ms.sneakSolo = true; SAVE.save(G.meta); } },
     { t: L("“走!巡逻要过来了!”CC拽着你缩回阴影。\n远处,天边泛起熟悉的白光。00:42,不会为任何人停留。",
         "“Move! Patrol incoming!” CC yanks you back into shadow.\nFar off, the familiar white glow climbs the horizon. 00:42 waits for no one.") },
@@ -810,13 +812,13 @@ const SCENES = {
         "“My dad… he's really in there?”\nBigface's voice is shaking. The man who'd put a gun to a bank vault has palms slick with sweat.") },
     { t: L("CC领着你们绕开巡逻,停在“学术交流中心”后侧的一扇矮窗外。\n窗内是一间起居室。白板,42,还有——一个伏在桌上写字的老人。",
         "CC steers you both around the patrols to a low window at the rear of the Academic Exchange Center.\nInside: a living room. Whiteboards. 42s. And — an old man hunched over a desk, writing.") },
-    { t: L("大脸猫扒住窗沿的手,青筋暴起。\n“爸。”他隔着玻璃,极轻地喊了一声。",
+    { em: "whisper", t: L("大脸猫扒住窗沿的手,青筋暴起。\n“爸。”他隔着玻璃,极轻地喊了一声。",
         "Bigface grips the sill, veins standing out on his hands.\n“Dad.” He calls it through the glass, barely above a breath.") },
     { t: L("老人抬起头。浑浊的眼睛对上儿子的,忽然清明了一瞬。\n他扑到窗边,抓住儿子扒着窗沿的手指,只重复一句话:",
         "The old man looks up. His clouded eyes meet his son's — and for one instant, they clear.\nHe lunges to the window, seizes his son's fingers on the sill, and repeats one sentence, over and over:") },
-    { who: L("猫爸", "The Old Man"), t: L("“42……不要算42……谁都不要,再算出42……”",
+    { em: "danger", who: L("猫爸", "The Old Man"), t: L("“42……不要算42……谁都不要,再算出42……”",
         "“42… don't solve 42… no one must ever… solve 42 again…”") },
-    { t: L("警报声起。CC几乎是拖着两个人撤进下水道的。\n黑暗里,你听见身后那个满手血腥的悍匪,哭得像个孩子。",
+    { fx: "alarm", t: L("警报声起。CC几乎是拖着两个人撤进下水道的。\n黑暗里,你听见身后那个满手血腥的悍匪,哭得像个孩子。",
         "Alarms rise. CC all but drags the two of you back into the sewers.\nIn the dark behind you, the blood-soaked bandit is crying like a child.") },
     { set: (G) => { G.meta.ms.fatherSon = true; SAVE.save(G.meta); } },
     { end: (G) => window.__midnight() },
@@ -874,7 +876,7 @@ const SCENES = {
         "[Reality · The Review]\nThe meeting room is dead silent; Director Zhao's expression is colder than ice. Staring at your blank sheet, you suddenly think of the cat in the dream.") },
     { t: L("笔尖落纸,寥寥几行——耳朵、胡须、一条上翘的尾巴。那份活灵活现,是你在梦里看了不知多少遍的神态。",
         "The pen touches paper — a few spare lines. Ears, whiskers, one upturned tail. Its liveliness is an expression you have watched, countless times, in the dream.") },
-    { t: L("邻座的同事先惊呼出声。然后是整个设计部。\n连赵英珺都拿起了那张纸,端详许久:“不错。它叫什么?”",
+    { fx: "glow", t: L("邻座的同事先惊呼出声。然后是整个设计部。\n连赵英珺都拿起了那张纸,端详许久:“不错。它叫什么?”",
         "The colleague beside you gasps first. Then the whole design department.\nEven Zhao Yingjun picks up the sheet and studies it at length. “Not bad. What's its name?”") },
     { menu: [
       { text: L("“叫……莱茵。”", "“Call her… Rhein.”"), goto: "r1_name" },
@@ -916,7 +918,7 @@ const SCENES = {
     { art: "✉️" },
     { t: L("【现实 · MX公司前台】\n你抱着莱茵猫的打样玩偶路过前台,前台小姐姐叫住你:“林弦,帮忙把这个带给赵总。”",
         "[Reality · MX Front Desk]\nCarrying a sample Rhein-cat plush past reception, you're flagged down: “Lin Xian — take this up to Director Zhao, would you?”") },
-    { t: L("一张暗红色的卡片,烫金的四个字。\n天才俱乐部。", "A dark red card. Four gilt characters.\nThe Genius Club.") },
+    { fx: "reveal", fxArg: "✉️", t: L("一张暗红色的卡片,烫金的四个字。\n天才俱乐部。", "A dark red card. Four gilt characters.\nThe Genius Club.") },
     { t: L("和梦里保险箱中的那张,一模一样。\n它不该存在于现实——这个名字你只在六百年后的梦里听过。可它就躺在你的掌心,墨香未散。",
         "Identical to the one inside the dream's safe.\nIt should not exist in reality — you've only ever heard the name six hundred years from now. Yet here it lies in your palm, the ink still fragrant.") },
     { t: L("走廊尽头,赵英珺接过请柬,正面看了看,背面看了看,表情没有一丝波澜,仿佛只是收到一张普通的会议通知。\n她的高跟鞋声消失在电梯里。",

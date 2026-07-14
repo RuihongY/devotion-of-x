@@ -138,6 +138,51 @@
     setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 600); }, 3200);
   }
 
+  /* ── FX 特效 ──────────────────────────────── */
+  const FXDUR = { bang: 450, boom: 1000, alarm: 3100, sirens: 2500, whiteout: 1150, glitch: 650, glow: 1700, sparks: 2600, reveal: 1450, doomsweep: 2600 };
+  let particleBusy = false;
+  function playFx(name, arg) {
+    const layer = $("fx");
+    if (name === "glitch") { app.classList.add("glitchfx"); setTimeout(() => app.classList.remove("glitchfx"), 620); }
+    if (name === "bang") { app.classList.remove("shake-s"); void app.offsetWidth; app.classList.add("shake-s"); setTimeout(() => app.classList.remove("shake-s"), 260); }
+    if (name === "boom") { app.classList.remove("shake"); void app.offsetWidth; app.classList.add("shake"); setTimeout(() => app.classList.remove("shake"), 1050); }
+    const el = document.createElement("div");
+    el.className = name === "reveal" ? "fx-reveal" : "flashfx fx-" + name;
+    if (name === "reveal") el.textContent = arg || "🖼️";
+    layer.appendChild(el);
+    setTimeout(() => el.remove(), FXDUR[name] || 1200);
+    if (name === "boom") spawnParticles(22, "debris", 900);
+    if (name === "sparks") spawnParticles(24, "spark", 2400);
+    if (name === "glow") spawnParticles(12, "gold", 1600);
+  }
+  window.playFx = playFx;
+  function spawnParticles(n, kind, life) {
+    if (particleBusy) return;
+    particleBusy = true;
+    const layer = $("fx");
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement("div");
+      p.className = "fx-p " + kind;
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random() * 180;
+      const up = kind === "gold" ? -(60 + Math.random() * 140) : Math.sin(ang) * dist;
+      p.style.setProperty("--x", Math.cos(ang) * dist + "px");
+      p.style.setProperty("--y", (kind === "gold" ? up : up + 40) + "px");
+      p.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+      p.style.setProperty("--d", (life * (0.6 + Math.random() * 0.4)) + "ms");
+      if (kind === "spark") p.style.animationDelay = (Math.random() * 900) + "ms";
+      layer.appendChild(p);
+      setTimeout(() => p.remove(), life + 1000);
+    }
+    setTimeout(() => { particleBusy = false; }, life);
+  }
+  function setArt(emoji) {
+    V.art.innerHTML = '<span class="art pop">' + emoji + "</span>";
+  }
+  function setMood(m) {
+    main.className = m ? "mood-" + m : "";
+  }
+
   /* ── 时钟 ─────────────────────────────────── */
   let midnightPending = false;
 
@@ -176,12 +221,16 @@
     midnightPending = false;
     if (G.run.ended) return;
     G.run.ended = true;
-    V.flash.classList.remove("go"); void V.flash.offsetWidth; V.flash.classList.add("go");
-    app.classList.add("shake");
+    // 序列:天际烧红的暗波涌上 → 白闪+重震 → 00:42 故障卡
+    playFx("doomsweep");
+    setTimeout(() => {
+      V.flash.classList.remove("go"); void V.flash.offsetWidth; V.flash.classList.add("go");
+      app.classList.add("shake");
+    }, 950);
     setTimeout(() => {
       app.classList.remove("shake");
       showCard({ cls: "doom", big: "00:42", body: T().doomBody, onTap: wake });
-    }, 650);
+    }, 1650);
   }
   window.__midnight = forceMidnight;
 
@@ -290,7 +339,9 @@
     const n = SC.nodes[SC.i];
 
     if (n.cond && !n.cond(G)) { SC.i++; return step(); }
-    if (n.art) { V.art.textContent = n.art; SC.i++; return step(); }
+    if (n.art) { setArt(n.art); SC.i++; return step(); }
+    if (n.mood) { setMood(n.mood); SC.i++; return step(); }
+    if (n.fx && n.t === undefined && !n.menu) { playFx(n.fx, n.fxArg); SC.i++; return step(); }
     if (n.set) { applySet(n.set); SC.i++; return step(); }
     if (n.grant) { grantClue(n.grant); SC.i++; return step(); }
     if (n.die) return die(n.die);
@@ -310,6 +361,8 @@
 
   function showLine(n) {
     V.choices.classList.remove("on");
+    if (n.fx) playFx(n.fx, n.fxArg);
+    V.dtext.className = n.em ? "em-" + n.em : "";
     V.dname.textContent = tr(n.who) || "";
     V.dname.style.display = n.who ? "block" : "none";
     V.dnext.style.visibility = "hidden";
@@ -430,6 +483,7 @@
   function enterLocation(id, noTravel) {
     const Lc = LOCATIONS[id];
     setPhase("loc");
+    if (Lc.mood) setMood(Lc.mood);
     updateClockUI();
     const acts = availActions(id);
     let html = '<div id="locHead"><span class="icon">' + Lc.icon + "</span><h2>" + tr(Lc.name) + "</h2></div>" +
@@ -483,16 +537,16 @@
     updateClockUI();
     if (G.meta.loop === 0) {
       setPhase("scene");
-      V.art.textContent = "🌙";
+      setArt("🌙"); setMood("street");
       runScene("intro");
     } else if (CH(G) >= 2 && !G.meta.ms.ch2Intro) {
       G.meta.ms.ch2Intro = true;
       SAVE.save(G.meta);
       setPhase("scene");
-      V.art.textContent = "🌙";
+      setArt("🌙"); setMood("street");
       runScene("ch2_intro", renderMap);
     } else {
-      V.art.textContent = "🌙";
+      setArt("🌙"); setMood("street");
       runScene("night_open", renderMap);
     }
   }
@@ -526,7 +580,7 @@
       SAVE.save(G.meta);
       G.inReality = true;
       setPhase("scene");
-      V.art.textContent = act.art || "🏢";
+      setArt(act.art || "🏢"); setMood("");
       runScene(act.scene, null);
     } else {
       nextNight();
@@ -565,10 +619,11 @@
     SAVE.save(G.meta);
     G.inReality = true;
     setPhase("scene");
-    V.art.textContent = e.art || "🃏";
+    setArt(e.art || "🃏"); setMood("");
     runScene(e.scene, null);
   }
   window.endingCard = function (id) {
+    playFx("glow");
     const e = ENDINGS.find((x) => x.id === id);
     const unlocked = e.next && G.meta.chapter < e.next;
     if (unlocked) { G.meta.chapter = e.next; SAVE.save(G.meta); }
