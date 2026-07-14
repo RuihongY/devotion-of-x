@@ -3,6 +3,9 @@
 
 const L = (z, e) => ({ z, e });
 
+// 当前游玩的章节(可从标题屏重返第一章补支线);meta.chapter 是已解锁的最高章
+const CH = (G) => G.meta.play || G.meta.chapter || 1;
+
 /* ── 时钟 ── */
 const CLOCK = {
   total: 162,      // 22:00 → 00:42 共162分钟
@@ -127,7 +130,7 @@ const LOCATIONS = {
   },
   bank: {
     name: L("中央银行", "Central Bank"), icon: "🏦",
-    desc: (G) => G.meta.chapter >= 2
+    desc: (G) => CH(G) >= 2
       ? L("请柬已经到手,金库的故事翻篇了。营业大厅的灯,还是老样子亮着。",
           "The invitation is yours; the vault's story has turned its page. The lobby lights burn on as always.")
       : (G.run.flags.heistStarted
@@ -137,10 +140,10 @@ const LOCATIONS = {
             "The lobby is brightly lit. Who'd guess that in an hour, it will run red.")),
     actions: [
       { text: L("以顾客身份踩点", "Scout as a customer"), cost: 10, when: [0, 55], req: ["c01"], once: "scouted",
-        hide: (G) => G.meta.chapter >= 2,
+        hide: (G) => CH(G) >= 2,
         fresh: true, seenKey: "seen_scout", scene: "bank_scout" },
       { text: L("混进劫案,直奔金库", "Slip in with the heist, straight to the vault"), cost: 15, when: [55, 148], req: ["c01", "c02"], once: "vaulted",
-        hide: (G) => G.meta.chapter >= 2,
+        hide: (G) => CH(G) >= 2,
         fresh: true, seenKey: "seen_vault", scene: "bank_vault" },
     ],
   },
@@ -149,12 +152,13 @@ const LOCATIONS = {
     desc: L("二十四小时营业。老板永远在柜台后打同一局手机游戏。",
       "Open 24 hours. The owner is forever behind the counter, playing the same round of the same phone game."),
     actions: [
-      { text: L("买一份报纸", "Buy a newspaper"), cost: 5, once: "paper", hide: (G) => G.meta.chapter >= 2, scene: "store_paper" },
+      { text: L("买一份报纸", "Buy a newspaper"), cost: 5, once: "paper", hide: (G) => CH(G) >= 2, scene: "store_paper" },
       { text: L("再买一份今天的报纸", "Buy today's paper again"), cost: 5, once: "paper2", req: ["d03"],
-        hide: (G) => G.meta.chapter < 2 || hasClue("d09"), fresh: true, seenKey: "seen_paper2",
+        hide: (G) => CH(G) < 2 || hasClue("d09"), fresh: true, seenKey: "seen_paper2",
         scene: "store_paper2" },
       { text: L("逗一逗老板的猫", "Play with the owner's cat"), cost: 5, once: "cat",
-        hide: (G) => hasClue("c17") || (hasClue("c15") && !G.meta.butterfly.cat), scene: "store_cat" },
+        hide: (G) => hasClue("c17") || (hasClue("c15") && !G.meta.butterfly.cat),
+        scene: "store_cat" },
     ],
   },
   bookstore: {
@@ -165,7 +169,7 @@ const LOCATIONS = {
       { text: L("随便翻翻", "Browse the shelves"), cost: 10, once: "browse",
         seenKey: "seen_browse", hide: (G) => !!G.meta.ms.seen_browse, scene: "book_browse" },
       { text: L("查证报纸的疑点", "Chase the newspaper's oddity"), cost: 15, req: ["c07"], once: "history",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("c08"),
+        hide: (G) => CH(G) >= 2 && hasClue("c08"),
         fresh: true, seenKey: "seen_history", scene: "book_history" },
     ],
   },
@@ -177,11 +181,11 @@ const LOCATIONS = {
       { text: L("敲敲正门", "Knock on the front door"), cost: 5, once: "door",
         seenKey: "seen_door", hide: (G) => !!G.meta.ms.seen_door, scene: "lib_door" },
       { text: L("从坏掉的后窗潜入", "Slip in through the broken rear window"), cost: 15, req: ["c08"], once: "sneak",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("c09"), scene: "lib_truth" },
+        hide: (G) => CH(G) >= 2 && hasClue("c09"), scene: "lib_truth" },
       { text: L("从坏掉的后窗潜入", "Slip in through the broken rear window"), cost: 15, req: ["c17"], once: "sneak",
-        hide: (G) => hasClue("c08") || (G.meta.chapter >= 2 && hasClue("c09")), scene: "lib_truth" },
+        hide: (G) => hasClue("c08") || (CH(G) >= 2 && hasClue("c09")), scene: "lib_truth" },
       { text: L("查《宇宙常数导论》的馆藏记录", "Search the catalog for the Constant book"), cost: 15, req: ["d04"], once: "constant",
-        hide: (G) => G.meta.chapter < 2 || hasClue("d06"),
+        hide: (G) => CH(G) < 2 || hasClue("d06"),
         fresh: true, seenKey: "seen_constant", scene: "lib_constant" },
     ],
   },
@@ -191,16 +195,16 @@ const LOCATIONS = {
       "Smoke and cheap whiskey. In the back booth sit several men with their caps pulled low."),
     actions: [
       { text: L("在邻座偷听", "Eavesdrop from the next booth"), cost: 10, when: [0, 55], once: "listen",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("c03"), scene: "bar_listen" },
+        hide: (G) => CH(G) >= 2 && hasClue("c03"), scene: "bar_listen" },
       { text: L("凑过去和大脸猫搭话", "Sit down across from Bigface"), cost: 10, when: [0, 55], req: ["c03"], once: "talked",
-        hide: (G) => G.meta.chapter >= 2 && hasClue("c04"),
+        hide: (G) => CH(G) >= 2 && hasClue("c04"),
         fresh: true, seenKey: "seen_talk", scene: "bar_talk" },
       { text: L("说服他:团结就是力量", "Convince him: strength in numbers"), cost: (G) => hasPerk("p_talk") ? 10 : 15,
         when: [0, 55], req: ["c04", "c16"], once: "persuaded",
-        hide: (G) => G.meta.chapter >= 2,
+        hide: (G) => CH(G) >= 2,
         fresh: true, seenKey: "seen_persuade", scene: "bar_persuade" },
       { text: L("问起他的父亲", "Ask about his father"), cost: 10, when: [0, 55], req: ["c04"], once: "askedDad",
-        hide: (G) => G.meta.chapter < 2 || hasClue("d03"),
+        hide: (G) => CH(G) < 2 || hasClue("d03"),
         fresh: true, seenKey: "seen_dad", scene: "bar_father" },
     ],
   },
@@ -210,32 +214,32 @@ const LOCATIONS = {
       "A rusted fire escape climbs to the rooftop. The wind is fierce; you can see the bank's rear wall and a square air vent."),
     actions: [
       { text: L("在通风口旁守株待兔", "Wait in ambush by the vent"), cost: 10, when: [80, 148], req: ["c05"], once: "ccMet",
-        hide: (G) => G.meta.chapter >= 2,
+        hide: (G) => CH(G) >= 2,
         fresh: true, seenKey: "seen_cc", scene: "cc_talk" },
       { text: L("对她说出照片上的名字", "Say the name from the photograph"), cost: (G) => hasPerk("p_insight") ? 5 : 10,
         when: [80, 148], req: ["d07"], once: "ccMet",
-        hide: (G) => G.meta.chapter < 2 || hasClue("d08"),
+        hide: (G) => CH(G) < 2 || hasClue("d08"),
         fresh: true, seenKey: "seen_vv", scene: "cc_vv" },
     ],
   },
   /* —— 第二章新地点 —— */
   newcity: {
     name: L("新东海市 · 关卡", "New Donghai · Checkpoint"), icon: "🏙️",
-    hide: (G) => G.meta.chapter < 2,
+    hide: (G) => CH(G) < 2,
     desc: L("高墙在夜色里泛着冷光,墙内的天际线比外面高出一整个时代。哨卡的白衣人一动不动,像一排雕塑。",
       "The wall gleams cold in the night; the skyline within stands a whole era taller. The men in white at the gate never move — a row of statues."),
     actions: [
       { text: L("远远观察门禁", "Observe the gate from afar"), cost: 10, once: "watched", hide: (G) => hasClue("d02"),
         fresh: true, seenKey: "seen_gate", scene: "gate_watch" },
-      { text: L("硬闯试试", "Try to force your way in"), cost: 10, seenKey: "seen_force",
-        hide: (G) => !!G.meta.ms.seen_force, scene: "gate_force" },
+      { text: L("硬闯试试", "Try to force your way in"), cost: 10,
+        seenKey: "seen_force", hide: (G) => !!G.meta.ms.seen_force, scene: "gate_force" },
       { text: L("走密道潜入(CC带路)", "Take the hidden passage (CC leads)"), cost: 25, req: ["d08", "d09"], once: "sneaked",
         when: [0, 130], fresh: true, seenKey: "seen_sneak", scene: "sneak" },
     ],
   },
   oldhouse: {
     name: L("大脸猫老宅", "Bigface's Old House"), icon: "🏚️",
-    hide: (G) => G.meta.chapter < 2 || !hasClue("d03"),
+    hide: (G) => CH(G) < 2 || !hasClue("d03"),
     desc: L("城郊的老房子,院门虚掩。信箱里塞满没人取的传单,门牌被雨水泡得发白。",
       "An old house on the city's edge, its gate ajar. The mailbox overflows with unclaimed flyers; rain has bleached the number plate white."),
     actions: [
@@ -401,7 +405,8 @@ const SCENES = {
         { text: L("推理密码", "Deduce the code"), req: ["c09", "c11"], goto: "deduce" },
         { text: L("输入 2624 0042", "Enter 2624 0042"), req: ["c12"], goto: "open" },
         { text: L("按计划:上气割枪", "Follow the plan: bring up the torch"), req: ["c16"],
-          hide: (G) => !(G.run.flags.gangAlly && (G.meta.ms.ccTalks || 0) >= 3),
+          lockIf: (G) => !(G.run.flags.gangAlly && (G.meta.ms.ccTalks || 0) >= 3),
+          lockNote: L("需要:今晚已在酒吧说服大脸猫 + 与CC天台深谈三次", "Requires: Bigface persuaded tonight + three rooftop talks with CC"),
           goto: "coop" },
         { text: L("不管保险箱了,搬钱躺平", "Forget the safe — grab cash and coast"), hide: (G) => !hasClue("c09"),
           set: (G) => { G.meta.ms.slacker = true; SAVE.save(G.meta); }, goto: "slack" },
@@ -778,7 +783,6 @@ const SCENES = {
     { art: "🕳️" },
     { t: L("西三支线。CC在前面带路,手电的光斑贴着湿滑的管壁移动。\n尽头,一扇没有编号的铁门。她按了七下,门开了。",
         "West branch three. CC leads the way, her flashlight spot sliding along the slick tunnel wall.\nAt the end: an iron door with no number. She presses seven times. It opens.") },
-    { label: "sneak_pick" },
     { menu: [
       { text: L("就我们两个,轻装潜入", "Just the two of us — go in light"), goto: "x1" },
       { text: L("叫上大脸猫——他父亲就在里面", "Bring Bigface — his father is in there"), goto: "x2" },
@@ -998,7 +1002,7 @@ const REALITY = [
 /* ── 下一步提示(按主线链缺口,醒来结算卡上显示) ── */
 function nextHint(G) {
   const has = (id) => G.meta.clues.includes(id);
-  if (G.meta.chapter >= 2) {
+  if (CH(G) >= 2) {
     // 第二章提示链
     if (G.meta.endings.includes("X1") || G.meta.endings.includes("X2")) return null;
     if (!has("d08")) return L("天台上,把照片上的名字念给她听。", "On the rooftop, speak the name from the photograph to her.");
@@ -1009,7 +1013,13 @@ function nextHint(G) {
     if (!has("d09")) return L("再买一份今天的报纸。", "Buy today's paper once more.");
     return L("万事俱备。去新东海市关卡,走密道。", "All is ready. Head to the New Donghai checkpoint and take the hidden passage.");
   }
-  if (G.meta.ms.invite) return null; // 主线已通
+  if (G.meta.ms.invite) {
+    // 第一章主线已通:提示锯开保险柜的合作支线(E3)
+    if (!G.meta.endings.includes("E3") && has("c16"))
+      return L("支线:天台与她深谈三次、酒吧说服大脸猫留下人手,再回金库——上气割枪。",
+        "Side route: three deep talks on the rooftop, persuade Bigface to spare his crew, then back to the vault — bring up the torch.");
+    return null;
+  }
   if (!has("c01")) return L("再去经历一次那场劫案吧。", "Go live through that heist once more.");
   if (!has("c02")) return L("23:00 之前,银行大厅值得一逛。", "Before 23:00, the bank lobby is worth a stroll.");
   if (!has("c06")) return L("23:00 之后,跟着劫案走到最深处。", "After 23:00, follow the heist all the way down.");
@@ -1025,11 +1035,11 @@ function nextHint(G) {
 const ENDINGS = [
   /* 第二章 · 章节结局 */
   { id: "X2", title: L("父与子", "Father and Son"), scene: "ending_x2", art: "🎭",
-    cond: (G) => G.meta.chapter >= 2 && !!G.meta.ms.fatherSon,
+    cond: (G) => CH(G) >= 2 && !!G.meta.ms.fatherSon,
     chapterEnd: L("第二章 · 完\n第三章 · 敬请期待", "End of Chapter 2\nChapter 3 · Coming soon"),
     epitaph: L("高墙锁得住一个人,锁不住一声“爸”。", "A wall can hold a man. It cannot hold the word “Dad.”") },
   { id: "X1", title: L("城中之城", "The City Within"), scene: "ending_x1", art: "🏙️",
-    cond: (G) => G.meta.chapter >= 2 && !!G.meta.ms.sneakSolo,
+    cond: (G) => CH(G) >= 2 && !!G.meta.ms.sneakSolo,
     chapterEnd: L("第二章 · 完\n第三章 · 敬请期待", "End of Chapter 2\nChapter 3 · Coming soon"),
     epitaph: L("墙内的声音,和你一模一样。", "The voice within the wall is exactly your own.") },
   /* 第一章 · 章节结局 */

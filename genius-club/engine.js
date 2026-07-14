@@ -54,6 +54,7 @@
       restart: "从头开始", start: "入梦",
       confirmReset: "清除全部记忆(情报/进度/结局)?此操作不可撤销。",
       progress: "当前进度:", chap1: "第一章", chap2: "第二章 · 新东海市",
+      toChap1: "重返第一章(补支线:锯开保险柜)", toChap2: "前往第二章 · 新东海市",
       endingsGot: "已解锁结局:",
       credit: "改编自小说《天才俱乐部》(城城与蝉) · 时间循环冒险",
       langBtn: "Switch to English",
@@ -88,6 +89,7 @@
       restart: "Start over", start: "Enter the dream",
       confirmReset: "Erase all memory (intel / progress / endings)? This cannot be undone.",
       progress: "Progress: ", chap1: "Chapter 1", chap2: "Chapter 2 · New Donghai City",
+      toChap1: "Revisit Chapter 1 (side route: cut the safe open)", toChap2: "Go to Chapter 2 · New Donghai City",
       endingsGot: "Endings unlocked: ",
       credit: "Adapted from the novel “The Genius Club” (Chengcheng Yu Chan) · a time-loop adventure",
       langBtn: "切换为中文",
@@ -347,6 +349,11 @@
         b.classList.add("locked");
         b.innerHTML = "<span>🔒 " + tr(c.text) + "</span>" +
           '<span class="cost">' + T().missing + missing.map((id) => CLUES[id] ? tr(CLUES[id].name) : "???").join("、") + "</span>";
+      } else if (c.lockIf && c.lockIf(G)) {
+        // 条件未满足但可见:让玩家知道这条路线存在、还差什么
+        b.classList.add("locked");
+        b.innerHTML = "<span>🔒 " + tr(c.text) + "</span>" +
+          '<span class="cost">' + (tr(c.lockNote) || "") + "</span>";
       } else {
         b.innerHTML = "<span>" + tr(c.text) + "</span>" + (cost ? '<span class="cost">' + T().min(cost) + "</span>" : "");
         b.onclick = () => {
@@ -465,10 +472,11 @@
 
   /* ── 夜晚循环 ─────────────────────────────── */
   function startLoop() {
-    // 安全网:存档里已有达成但未播放的结局(比如在00:42黑屏时关掉了页面),先补播
-    G.run = G.run || freshRun();
-    const pending = checkEnding();
-    if (pending) return playEnding(pending);
+    // 安全网:存档里已有达成但未播放的结局(如在00:42黑屏处退出),先补播
+    if (!G.run || G.run.ended || G.phase === "title") {
+      const pending = checkEnding();
+      if (pending) { G.run = G.run || freshRun(); return playEnding(pending); }
+    }
     G.run = freshRun();
     G.inReality = false;
     midnightPending = false;
@@ -477,7 +485,7 @@
       setPhase("scene");
       V.art.textContent = "🌙";
       runScene("intro");
-    } else if (G.meta.chapter >= 2 && !G.meta.ms.ch2Intro) {
+    } else if (CH(G) >= 2 && !G.meta.ms.ch2Intro) {
       G.meta.ms.ch2Intro = true;
       SAVE.save(G.meta);
       setPhase("scene");
@@ -577,7 +585,11 @@
       b.className = "btn primary";
       b.style.marginTop = "36px";
       b.textContent = T().contChap(e.next);
-      b.onclick = (ev) => { ev.stopPropagation(); V.card.className = ""; G.inReality = false; startLoop(); };
+      b.onclick = (ev) => {
+        ev.stopPropagation(); V.card.className = ""; G.inReality = false;
+        G.meta.play = e.next; SAVE.save(G.meta);
+        startLoop();
+      };
       V.card.appendChild(b);
       const t = document.createElement("button");
       t.className = "btn subtle";
@@ -604,9 +616,17 @@
     if (has) {
       const p = document.createElement("div");
       p.style.cssText = "font-size:13px;color:var(--gold);letter-spacing:.15em;margin-bottom:10px";
-      p.textContent = T().progress + (G.meta.chapter >= 2 ? T().chap2 : T().chap1);
+      p.textContent = T().progress + (CH(G) >= 2 ? T().chap2 : T().chap1);
       V.title.appendChild(p);
       addBtn(T().cont(G.meta.loop + 1), "primary", () => startLoop());
+      if (G.meta.chapter >= 2) {
+        // 章节切换:可重返第一章补支线,或回到第二章
+        if (CH(G) >= 2) {
+          addBtn(T().toChap1, "", () => { G.meta.play = 1; SAVE.save(G.meta); startLoop(); });
+        } else {
+          addBtn(T().toChap2, "", () => { G.meta.play = 2; SAVE.save(G.meta); startLoop(); });
+        }
+      }
       addBtn(T().restart, "", () => {
         if (confirm(T().confirmReset)) {
           SAVE.reset(); G.meta = SAVE.freshMeta(); renderTitle();

@@ -15,7 +15,8 @@
       realityDone: [],    // 已播放的现实幕 scene id(如 "r0")
       endings: [],        // 已达成结局 id
       butterfly: {},      // 时空蝴蝶 flags(cat: 猫已命名莱茵)
-      chapter: 1,         // 已解锁的章节
+      chapter: 1,         // 已解锁的最高章节
+      play: 1,            // 当前游玩的章节(可从标题屏重返第一章)
     };
   }
 
@@ -34,6 +35,8 @@
         const es = d.endings || [];
         d.chapter = (es.includes("E2") || es.includes("E3")) ? 2 : 1;
       }
+      // 迁移旧档:play(当前游玩章)默认等于已解锁的最高章
+      if (!d.play) d.play = d.chapter;
       // 补齐字段,容忍旧档缺项
       return Object.assign(freshMeta(), d);
     } catch (e) {
