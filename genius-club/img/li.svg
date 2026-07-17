@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- 李主管:方框眼镜、衬衫领带、常年疲惫 -->
+  <defs>
+    <linearGradient id="ljj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a4152"/><stop offset="1" stop-color="#232838"/>
+    </linearGradient>
+  </defs>
+  <!-- 身躯:衬衫+松掉的领带 -->
+  <path d="M50 260 C54 208 66 182 86 172 L114 172 C134 182 146 208 150 260 Z" fill="url(#ljj)"/>
+  <path d="M86 172 L100 192 L114 172 L107 166 L100 178 L93 166 Z" fill="#dfe0e4"/>
+  <path d="M100 192 L94 232 L100 244 L106 230 Z" fill="#5a76b8"/>
+  <!-- 颈 -->
+  <rect x="91" y="142" width="18" height="26" rx="6" fill="#dcb794"/>
+  <!-- 脸 -->
+  <ellipse cx="100" cy="102" rx="32" ry="37" fill="#e6c19e"/>
+  <!-- 短发 -->
+  <path d="M66 94 C66 56 134 56 134 94 C134 80 124 70 100 68 C76 70 66 80 66 94 Z" fill="#242028"/>
+  <!-- 方框眼镜 -->
+  <g fill="none" stroke="#33302c" stroke-width="3">
+    <rect x="74" y="92" width="22" height="15" rx="3"/>
+    <rect x="104" y="92" width="22" height="15" rx="3"/>
+    <path d="M96 99 L104 99"/>
+  </g>
+  <rect x="76" y="94" width="18" height="11" rx="2" fill="#cfe2ea" opacity=".3"/>
+  <rect x="106" y="94" width="18" height="11" rx="2" fill="#cfe2ea" opacity=".3"/>
+  <!-- 疲惫眉眼与叹气嘴 -->
+  <path d="M78 88 L94 86 M106 86 L122 88" stroke="#2c2620" stroke-width="3" stroke-linecap="round"/>
+  <path d="M92 124 Q100 121 108 124" fill="none" stroke="#a07a58" stroke-width="3.4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- CC:白色面具的蒙面女子,黑衣高领,马尾 -->
+  <defs>
+    <linearGradient id="ccj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#181c26"/><stop offset="1" stop-color="#0c0e16"/>
+    </linearGradient>
+  </defs>
+  <!-- 马尾(身后) -->
+  <path d="M128 66 C150 80 152 130 140 168 C136 178 128 176 130 164 C138 128 136 92 120 76 Z" fill="#0d1018"/>
+  <!-- 身躯:修身黑衣 -->
+  <path d="M46 260 C50 206 62 178 84 168 L116 168 C138 178 150 206 154 260 Z" fill="url(#ccj)"/>
+  <path d="M46 260 C50 206 62 178 84 168 L89 172 C68 184 58 210 56 260 Z" fill="#9adfe8" opacity=".16"/>
+  <!-- 高领 -->
+  <path d="M84 168 L84 150 L116 150 L116 168 L100 176 Z" fill="#060810"/>
+  <!-- 颈 -->
+  <rect x="90" y="132" width="20" height="24" rx="7" fill="#caa387"/>
+  <!-- 头发 -->
+  <path d="M60 78 C58 34 142 34 140 78 C142 100 136 116 128 124 L72 124 C64 116 58 100 60 78 Z" fill="#12141e"/>
+  <!-- 白色椭圆面具(微微偏头) -->
+  <g transform="rotate(-3 100 92)">
+    <ellipse cx="100" cy="92" rx="35" ry="44" fill="#f4f2ee"/>
+    <ellipse cx="100" cy="92" rx="35" ry="44" fill="none" stroke="#d8d4cc" stroke-width="2"/>
+    <!-- 细长眼缝 -->
+    <path d="M82 88 L94 86" stroke="#1a1c24" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M106 86 L118 88" stroke="#1a1c24" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- 面具反光 -->
+    <path d="M76 70 Q84 58 98 54" fill="none" stroke="#ffffff" stroke-width="3" opacity=".55" stroke-linecap="round"/>
+  </g>
+  <!-- 侧发丝 -->
+  <path d="M64 84 Q60 108 70 126" fill="none" stroke="#12141e" stroke-width="10" stroke-linecap="round"/>
+</svg>

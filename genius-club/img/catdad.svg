@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- 猫爸:乱白发、圆眼镜、憔悴的老数学家 -->
+  <defs>
+    <linearGradient id="cdj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3c3830"/><stop offset="1" stop-color="#242019"/>
+    </linearGradient>
+  </defs>
+  <!-- 佝偻的身躯:旧开衫 -->
+  <path d="M50 260 C50 210 60 184 82 174 L118 174 C142 186 150 212 150 260 Z" fill="url(#cdj)"/>
+  <path d="M92 178 L92 260 M108 178 L108 260" stroke="#1c1914" stroke-width="2" opacity=".6"/>
+  <path d="M82 174 L100 192 L118 174" fill="none" stroke="#57503f" stroke-width="5"/>
+  <!-- 瘦颈 -->
+  <rect x="91" y="146" width="18" height="26" rx="6" fill="#c9a284"/>
+  <!-- 憔悴脸 -->
+  <ellipse cx="100" cy="104" rx="34" ry="40" fill="#d6b294"/>
+  <path d="M84 128 Q100 136 116 128" fill="none" stroke="#b08a68" stroke-width="2"/>
+  <!-- 凹陷颧骨阴影 -->
+  <path d="M74 108 Q80 118 90 120 M126 108 Q120 118 110 120" fill="none" stroke="#b08a68" stroke-width="2" opacity=".7"/>
+  <!-- 乱白发 -->
+  <path d="M66 84 C58 60 66 40 84 34 C90 22 116 22 122 36 C140 40 146 62 132 84 C140 70 134 56 124 52 C130 62 124 70 118 64 C120 52 108 44 100 48 C92 42 78 50 82 62 C74 58 70 68 78 76 C68 74 64 80 66 84 Z" fill="#e2ded6"/>
+  <path d="M62 92 Q56 104 62 114 M140 92 Q146 104 140 112" fill="none" stroke="#e2ded6" stroke-width="7" stroke-linecap="round"/>
+  <!-- 圆眼镜 -->
+  <g fill="none" stroke="#3a3630" stroke-width="3">
+    <circle cx="86" cy="100" r="12"/><circle cx="114" cy="100" r="12"/>
+    <path d="M98 100 L102 100"/>
+  </g>
+  <circle cx="86" cy="100" r="9" fill="#cfe2ea" opacity=".35"/>
+  <circle cx="114" cy="100" r="9" fill="#cfe2ea" opacity=".35"/>
+  <!-- 疲惫的眼与胡茬 -->
+  <path d="M80 118 Q86 122 92 119 M108 119 Q114 122 120 118" stroke="#8a6a50" stroke-width="2" fill="none"/>
+  <g stroke="#9c9488" stroke-width="1.4" opacity=".8">
+    <path d="M88 132 L86 137"/><path d="M96 134 L95 139"/><path d="M104 134 L105 139"/><path d="M112 132 L114 137"/>
+  </g>
+</svg>

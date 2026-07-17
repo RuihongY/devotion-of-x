@@ -6,6 +6,20 @@ const L = (z, e) => ({ z, e });
 // 当前游玩的章节(可从标题屏重返第一章补支线);meta.chapter 是已解锁的最高章
 const CH = (G) => G.meta.play || G.meta.chapter || 1;
 
+
+/* ── 角色立绘(who 显示名 → img/*.svg) ── */
+const CAST = {
+  "大脸猫": "bigface", "Bigface": "bigface",
+  "卡通猫面具男": "bigface", "Man in a Cat Mask": "bigface",
+  "CC": "cc",
+  "白衣人": "white", "Man in White": "white",
+  "猫爸": "catdad", "The Old Man": "catdad",
+  "李主管": "li", "Supervisor Li": "li",
+  "便利店老板": "keeper", "Shopkeeper": "keeper",
+  "赵英珺": "zhao", "Zhao Yingjun": "zhao",
+  "楚安晴": "anqing", "Chu Anqing": "anqing",
+};
+
 /* ── 时钟 ── */
 const CLOCK = {
   total: 162,      // 22:00 → 00:42 共162分钟
@@ -723,7 +737,7 @@ const SCENES = {
     { art: "✉️" },
     { t: L("同一组密码。咔哒。\n请柬还躺在原处——但这一次,你注意到了别的东西:箱底的衬板,有一角微微翘起。",
         "The same code. Click.\nThe invitation lies where it lay — but this time you notice something else: one corner of the base panel, ever so slightly lifted.") },
-    { fx: "reveal", fxArg: "🖼️", t: L("夹层里是一张老照片。\n长发、大胡子的中年男人,站在一面写满公式的白板前。照片背面,只有两个字母:\nVV。",
+    { fx: "reveal", fxArg: "img:photo", t: L("夹层里是一张老照片。\n长发、大胡子的中年男人,站在一面写满公式的白板前。照片背面,只有两个字母:\nVV。",
         "In the false bottom: an old photograph.\nA long-haired, bearded man stands before a whiteboard dense with formulas. On the back, just two letters:\nVV.") },
     { fx: "glitch", em: "danger", t: L("你把照片凑到应急灯下,心脏漏跳了一拍。\n这个男人的侧脸——像极了你自己。",
         "You hold the photo up to the emergency light, and your heart skips.\nThe man's profile — is unmistakably your own.") },
@@ -760,7 +774,7 @@ const SCENES = {
     { art: "🏚️" },
     { t: L("门没锁。灰尘在手电光柱里浮沉。\n你推开里屋的门——然后僵在原地。",
         "The door is unlocked. Dust drifts through your flashlight beam.\nYou push open the inner door — and freeze.") },
-    { art: "🕮" },
+    { art: "img:wall42" },
     { t: L("墙上。天花板上。地板上。衣柜的门板上。\n密密麻麻,层层叠叠,全是同一个数字:\n42。",
         "On the walls. The ceiling. The floorboards. The wardrobe doors.\nDense, layered, everywhere — one number, over and over:\n42.") },
     { t: L("粉笔的、钢笔的、指甲刻的。有的工整,有的癫狂,越靠近书桌越深,像某种漩涡的中心。\n宇宙常数——等于42。",
@@ -829,8 +843,9 @@ const SCENES = {
     { art: "🏥" },
     { t: L("【现实 · 公司讲座】\n人事部组织了一场心理健康讲座。主讲教授带来一个实习生——心理系的学妹,楚安晴。",
         "[Reality · Company Lecture]\nHR organizes a mental-health lecture. The professor brings along an intern — a psychology student named Chu Anqing.") },
-    { t: L("她走上台,开口的第一句话,你手里的笔就掉了。\n那个声音。你在梦里的天台上,听过几十遍。",
-        "She steps up to the podium, and at her first sentence the pen drops from your hand.\nThat voice. You have heard it dozens of times — on a rooftop, in a dream.") },
+    { who: L("楚安晴", "Chu Anqing"), t: L("“大家好,我是实习心理师,楚安晴。”", "“Hello, everyone. I'm Chu Anqing, intern counselor.”") },
+    { t: L("她开口的第一句话,你手里的笔就掉了。\n那个声音。你在梦里的天台上,听过几十遍。",
+        "At her first sentence the pen drops from your hand.\nThat voice. You have heard it dozens of times — on a rooftop, in a dream.") },
     { t: L("讲座结束,她收拾资料时朝你看了一眼,礼貌地笑了笑——是陌生人的笑。\n可你盯着她的侧脸,满脑子都是那只白色面具。\n六百年。这中间隔着六百年。为什么会像?",
         "After the lecture she glances over while gathering her notes and smiles politely — a stranger's smile.\nBut you stare at her profile and see nothing but a white mask.\nSix hundred years. Six hundred years lie between them. Why the resemblance?") },
     { t: L("(那晚回家,你把和CC的每一次对话都记了下来。有些话术,现实里也许用得上。)",
@@ -839,8 +854,9 @@ const SCENES = {
   ],
   a2: [
     { art: "🏢" },
-    { t: L("【现实 · 顶层办公室】\n“做我的兼职秘书吧。”赵英珺说得平静,“你会接触到一些……机密。”",
-        "[Reality · Top-Floor Office]\n“Be my part-time secretary,” Zhao Yingjun says evenly. “You'll be handling certain… confidential matters.”") },
+    { t: L("【现实 · 顶层办公室】", "[Reality · Top-Floor Office]") },
+    { who: L("赵英珺", "Zhao Yingjun"), t: L("“做我的兼职秘书吧。你会接触到一些……机密。”",
+        "“Be my part-time secretary. You'll be handling certain… confidential matters.”") },
     { t: L("上任第一天,你替她归档文件,亲眼看着她把那张暗红色请柬,锁进顶层办公室的保险柜。\n输密码时,她的手指没有一丝犹豫。",
         "On your first day, filing her documents, you watch her lock the dark red invitation into the top-floor safe.\nHer fingers enter the code without a moment's hesitation.") },
     { t: L("锁上之后,她隔着柜门看了很久。那眼神不是好奇,也不是敬畏——\n更像是在看一个如约而至的旧物。\n她,到底知道多少?",
@@ -876,8 +892,9 @@ const SCENES = {
         "[Reality · The Review]\nThe meeting room is dead silent; Director Zhao's expression is colder than ice. Staring at your blank sheet, you suddenly think of the cat in the dream.") },
     { t: L("笔尖落纸,寥寥几行——耳朵、胡须、一条上翘的尾巴。那份活灵活现,是你在梦里看了不知多少遍的神态。",
         "The pen touches paper — a few spare lines. Ears, whiskers, one upturned tail. Its liveliness is an expression you have watched, countless times, in the dream.") },
-    { fx: "glow", t: L("邻座的同事先惊呼出声。然后是整个设计部。\n连赵英珺都拿起了那张纸,端详许久:“不错。它叫什么?”",
-        "The colleague beside you gasps first. Then the whole design department.\nEven Zhao Yingjun picks up the sheet and studies it at length. “Not bad. What's its name?”") },
+    { fx: "glow", t: L("邻座的同事先惊呼出声。然后是整个设计部。\n连赵英珺都拿起了那张纸,端详许久。",
+        "The colleague beside you gasps first. Then the whole design department.\nEven Zhao Yingjun picks up the sheet and studies it at length.") },
+    { who: L("赵英珺", "Zhao Yingjun"), t: L("“不错。它叫什么?”", "“Not bad. What's its name?”") },
     { menu: [
       { text: L("“叫……莱茵。”", "“Call her… Rhein.”"), goto: "r1_name" },
     ]},
@@ -918,7 +935,7 @@ const SCENES = {
     { art: "✉️" },
     { t: L("【现实 · MX公司前台】\n你抱着莱茵猫的打样玩偶路过前台,前台小姐姐叫住你:“林弦,帮忙把这个带给赵总。”",
         "[Reality · MX Front Desk]\nCarrying a sample Rhein-cat plush past reception, you're flagged down: “Lin Xian — take this up to Director Zhao, would you?”") },
-    { fx: "reveal", fxArg: "✉️", t: L("一张暗红色的卡片,烫金的四个字。\n天才俱乐部。", "A dark red card. Four gilt characters.\nThe Genius Club.") },
+    { fx: "reveal", fxArg: "img:invite", t: L("一张暗红色的卡片,烫金的四个字。\n天才俱乐部。", "A dark red card. Four gilt characters.\nThe Genius Club.") },
     { t: L("和梦里保险箱中的那张,一模一样。\n它不该存在于现实——这个名字你只在六百年后的梦里听过。可它就躺在你的掌心,墨香未散。",
         "Identical to the one inside the dream's safe.\nIt should not exist in reality — you've only ever heard the name six hundred years from now. Yet here it lies in your palm, the ink still fragrant.") },
     { t: L("走廊尽头,赵英珺接过请柬,正面看了看,背面看了看,表情没有一丝波澜,仿佛只是收到一张普通的会议通知。\n她的高跟鞋声消失在电梯里。",

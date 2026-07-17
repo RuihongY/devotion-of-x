@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- 楚安晴:长发学生感,声音酷似CC -->
+  <defs>
+    <linearGradient id="aqj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#333a4d"/><stop offset="1" stop-color="#1e2230"/>
+    </linearGradient>
+  </defs>
+  <!-- 长发(身后) -->
+  <path d="M62 80 C58 130 60 168 68 196 L80 196 C72 160 72 120 78 88 Z" fill="#1a1c28"/>
+  <path d="M138 80 C142 130 140 168 132 196 L120 196 C128 160 128 120 122 88 Z" fill="#1a1c28"/>
+  <!-- 身躯:柔和开衫 -->
+  <path d="M52 260 C56 208 68 182 88 172 L112 172 C132 182 144 208 148 260 Z" fill="url(#aqj)"/>
+  <path d="M88 172 L100 190 L112 172" fill="none" stroke="#e8e6e0" stroke-width="5"/>
+  <!-- 颈 -->
+  <rect x="91" y="142" width="18" height="26" rx="6" fill="#eccbb0"/>
+  <!-- 脸:柔和年轻 -->
+  <ellipse cx="100" cy="102" rx="31" ry="37" fill="#f2d4ba"/>
+  <!-- 头发:中分长直发 -->
+  <path d="M66 96 C64 50 136 50 134 96 C134 82 126 68 100 66 C74 68 66 82 66 96 Z" fill="#1a1c28"/>
+  <path d="M66 96 Q62 118 70 134 M134 96 Q138 116 130 132" fill="none" stroke="#1a1c28" stroke-width="10" stroke-linecap="round"/>
+  <path d="M100 66 L100 74" stroke="#2c3040" stroke-width="2"/>
+  <!-- 淡紫发夹 -->
+  <path d="M126 84 L136 90" stroke="#b8a8e0" stroke-width="4" stroke-linecap="round"/>
+  <!-- 明亮的眼与浅笑 -->
+  <path d="M83 96 Q89 92 95 96 M105 96 Q111 92 117 96" stroke="#2c2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="89" cy="99" r="2.6" fill="#2c2620"/>
+  <circle cx="111" cy="99" r="2.6" fill="#2c2620"/>
+  <path d="M93 122 Q100 127 107 122" fill="none" stroke="#c98a80" stroke-width="3.4" stroke-linecap="round"/>
+</svg>

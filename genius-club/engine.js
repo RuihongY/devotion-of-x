@@ -12,6 +12,7 @@
     card: $("card"), flash: $("flash"), journal: $("journal"),
     jtabs: $("jtabs"), jlist: $("jlist"), toasts: $("toasts"),
     clock: $("clock"), timefill: $("timefill"), nightLabel: $("nightLabel"), journalBtn: $("journalBtn"),
+    stageFocus: $("stageFocus"), stageActors: $("stageActors"), bgA: $("bgA"), bgB: $("bgB"),
   };
 
   /* ── 语言 ─────────────────────────────────── */
@@ -146,9 +147,16 @@
     if (name === "glitch") { app.classList.add("glitchfx"); setTimeout(() => app.classList.remove("glitchfx"), 620); }
     if (name === "bang") { app.classList.remove("shake-s"); void app.offsetWidth; app.classList.add("shake-s"); setTimeout(() => app.classList.remove("shake-s"), 260); }
     if (name === "boom") { app.classList.remove("shake"); void app.offsetWidth; app.classList.add("shake"); setTimeout(() => app.classList.remove("shake"), 1050); }
-    const el = document.createElement("div");
-    el.className = name === "reveal" ? "fx-reveal" : "flashfx fx-" + name;
-    if (name === "reveal") el.textContent = arg || "🖼️";
+    let el;
+    if (name === "reveal" && arg && arg.indexOf("img:") === 0) {
+      el = document.createElement("img");
+      el.className = "fx-reveal-img";
+      el.src = "img/" + arg.slice(4) + ".svg";
+    } else {
+      el = document.createElement("div");
+      el.className = name === "reveal" ? "fx-reveal" : "flashfx fx-" + name;
+      if (name === "reveal") el.textContent = arg || "🖼️";
+    }
     layer.appendChild(el);
     setTimeout(() => el.remove(), FXDUR[name] || 1200);
     if (name === "boom") spawnParticles(22, "debris", 900);
@@ -176,11 +184,67 @@
     }
     setTimeout(() => { particleBusy = false; }, life);
   }
-  function setArt(emoji) {
-    V.art.innerHTML = '<span class="art pop">' + emoji + "</span>";
+  // 位置类 emoji 由照片背景承担,不再显示焦点图
+  const HIDE_ART = new Set(["🌙","🏦","🏛️","🍺","🏪","📚","🌃","🏙️","🏚️","🕐","🌆","🏢","🏥","🪞","🎭","🐱","🛏️"]);
+  // 关键道具 emoji → SVG 插画
+  const ART_IMG = { "🚪": "door", "🗄️": "safe", "✉️": "invite", "📰": "paper", "🔥": "torch" };
+  function setArt(v) {
+    if (v && v.indexOf("img:") === 0) { V.stageFocus.innerHTML = '<img class="focal pop" src="img/' + v.slice(4) + '.svg" alt="">'; return; }
+    if (ART_IMG[v]) { V.stageFocus.innerHTML = '<img class="focal pop" src="img/' + ART_IMG[v] + '.svg" alt="">'; return; }
+    if (HIDE_ART.has(v)) { V.stageFocus.innerHTML = ""; return; }
+    V.stageFocus.innerHTML = '<span class="art pop">' + v + "</span>";
   }
+  // mood → 场景照片(双层交叉淡入 + Ken Burns)
+  const MOOD_BG = { street: 1, bank: 1, bar: 1, roof: 1, lib: 1, city: 1, house: 1, plaza: 1, reality: 1 };
+  let bgFlip = 0, bgShown = "";
   function setMood(m) {
     main.className = m ? "mood-" + m : "";
+    const file = MOOD_BG[m] ? m : "";
+    if (file === bgShown) return;
+    bgShown = file;
+    const layers = [V.bgA, V.bgB];
+    const cur = layers[bgFlip], next = layers[bgFlip ^ 1];
+    if (!file) { cur.classList.remove("on"); next.classList.remove("on"); return; }
+    next.style.backgroundImage = 'url("scenes/' + file + '.jpg")';
+    next.classList.add("on");
+    cur.classList.remove("on");
+    bgFlip ^= 1;
+  }
+  /* ── 角色演出 ─────────────────────────────── */
+  let actorCount = 0;
+  function clearActors() {
+    V.stageActors.innerHTML = "";
+    actorCount = 0;
+  }
+  function focusActor(name) {
+    const all = [...V.stageActors.children];
+    if (!name || typeof CAST === "undefined" || !CAST[name]) {
+      // 旁白/无立绘角色:全员退光
+      all.forEach((a) => { a.classList.add("dim"); a.classList.remove("talking"); });
+      return;
+    }
+    const src = CAST[name];
+    let el = all.find((a) => a.dataset.a === src);
+    if (!el) {
+      el = document.createElement("img");
+      el.className = "actor enter " + (actorCount % 2 ? "posr" : "posl");
+      el.style.setProperty("--dir", actorCount % 2 ? "40px" : "-40px");
+      el.dataset.a = src;
+      el.src = "img/" + src + ".svg";
+      el.alt = "";
+      V.stageActors.appendChild(el);
+      actorCount++;
+    }
+    [...V.stageActors.children].forEach((a) => {
+      if (a === el) {
+        a.classList.remove("dim", "talking");
+        void a.offsetWidth;
+        a.classList.add("talking");
+      } else {
+        a.classList.add("dim");
+        a.classList.remove("talking");
+      }
+    });
   }
 
   /* ── 时钟 ─────────────────────────────────── */
@@ -323,6 +387,7 @@
     const nodes = SCENES[id];
     if (!nodes) { console.error("no scene", id); return backToLoc(); }
     SC = { nodes, i: 0, onBack: onBack || null };
+    clearActors();
     setPhase("scene");
     step();
   }
@@ -362,6 +427,7 @@
   function showLine(n) {
     V.choices.classList.remove("on");
     if (n.fx) playFx(n.fx, n.fxArg);
+    focusActor(n.who ? tr(n.who) : null);
     V.dtext.className = n.em ? "em-" + n.em : "";
     V.dname.textContent = tr(n.who) || "";
     V.dname.style.display = n.who ? "block" : "none";
@@ -580,7 +646,7 @@
       SAVE.save(G.meta);
       G.inReality = true;
       setPhase("scene");
-      setArt(act.art || "🏢"); setMood("");
+      setArt(act.art || "🏢"); setMood("reality");
       runScene(act.scene, null);
     } else {
       nextNight();
@@ -619,7 +685,7 @@
     SAVE.save(G.meta);
     G.inReality = true;
     setPhase("scene");
-    setArt(e.art || "🃏"); setMood("");
+    setArt(e.art || "🃏"); setMood("street");
     runScene(e.scene, null);
   }
   window.endingCard = function (id) {

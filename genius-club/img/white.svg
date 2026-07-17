@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- 白衣人:白色制服、帽子与口罩,只露出一条阴影眼带 -->
+  <defs>
+    <linearGradient id="whj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef0f4"/><stop offset="1" stop-color="#c6ccd8"/>
+    </linearGradient>
+  </defs>
+  <!-- 身躯:白大褂 -->
+  <path d="M36 260 C40 202 54 174 80 164 L120 164 C146 174 160 202 164 260 Z" fill="url(#whj)"/>
+  <path d="M100 172 L100 260" stroke="#aab2c2" stroke-width="2"/>
+  <path d="M80 164 L100 184 L120 164 L112 158 L100 172 L88 158 Z" fill="#dfe3ea"/>
+  <!-- 颈 -->
+  <rect x="88" y="140" width="24" height="22" rx="7" fill="#d5cfc8"/>
+  <!-- 头:帽+口罩 -->
+  <g>
+    <ellipse cx="100" cy="96" rx="40" ry="44" fill="#e9ebf0"/>
+    <!-- 制服帽 -->
+    <path d="M58 84 C58 52 142 52 142 84 L142 92 L58 92 Z" fill="#f4f6fa"/>
+    <path d="M58 88 L142 88 L142 96 L58 96 Z" fill="#c6ccd8"/>
+    <!-- 阴影眼带 -->
+    <rect x="66" y="98" width="68" height="16" rx="8" fill="#2a3040"/>
+    <circle cx="84" cy="106" r="3" fill="#8fa8d8" opacity=".9"/>
+    <circle cx="116" cy="106" r="3" fill="#8fa8d8" opacity=".9"/>
+    <!-- 口罩 -->
+    <path d="M68 118 Q100 142 132 118 L132 128 Q100 152 68 128 Z" fill="#f4f6fa"/>
+  </g>
+</svg>

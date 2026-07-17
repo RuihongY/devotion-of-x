@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 220">
+  <!-- 没有年份的报纸:日期被红圈标出 -->
+  <g transform="rotate(-4 130 110)">
+    <rect x="44" y="34" width="172" height="152" rx="3" fill="#e6e0d0"/>
+    <rect x="44" y="34" width="172" height="152" rx="3" fill="none" stroke="#c2bba8" stroke-width="2"/>
+    <!-- 报头 -->
+    <text x="130" y="60" font-size="17" text-anchor="middle" fill="#2a2620" font-family="serif" font-weight="bold" letter-spacing="4">东 海 日 报</text>
+    <path d="M56 68 L204 68" stroke="#2a2620" stroke-width="2"/>
+    <!-- 日期(无年份) -->
+    <text x="130" y="82" font-size="9.5" text-anchor="middle" fill="#5a5346" font-family="serif">8月28日  星期五</text>
+    <ellipse cx="130" cy="79" rx="46" ry="11" fill="none" stroke="#c23a48" stroke-width="2.4"/>
+    <!-- 头条与正文条 -->
+    <rect x="56" y="94" width="148" height="12" fill="#3a352c"/>
+    <g fill="#a8a190">
+      <rect x="56" y="114" width="70" height="4"/><rect x="56" y="122" width="70" height="4"/>
+      <rect x="56" y="130" width="70" height="4"/><rect x="56" y="138" width="62" height="4"/>
+      <rect x="134" y="114" width="70" height="4"/><rect x="134" y="122" width="70" height="4"/>
+      <rect x="134" y="130" width="70" height="4"/><rect x="134" y="138" width="58" height="4"/>
+      <rect x="56" y="154" width="148" height="4"/><rect x="56" y="162" width="148" height="4"/>
+      <rect x="56" y="170" width="120" height="4"/>
+    </g>
+    <rect x="134" y="146" width="70" height="1" fill="#c2bba8"/>
+  </g>
+</svg>

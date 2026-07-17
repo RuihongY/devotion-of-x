@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260">
+  <!-- 大脸猫:白色卡通猫面具的壮汉 -->
+  <defs>
+    <linearGradient id="bfj" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b2733"/><stop offset="1" stop-color="#191622"/>
+    </linearGradient>
+  </defs>
+  <!-- 壮硕身躯 -->
+  <path d="M28 260 C30 200 44 168 74 156 L126 156 C156 168 170 200 172 260 Z" fill="url(#bfj)"/>
+  <path d="M28 260 C30 200 44 168 74 156 L80 160 C52 174 40 204 38 260 Z" fill="#6ea8ff" opacity=".14"/>
+  <!-- 衣领 -->
+  <path d="M74 156 L100 178 L126 156 L118 150 L100 166 L82 150 Z" fill="#0f0d16"/>
+  <!-- 粗脖子 -->
+  <rect x="84" y="132" width="32" height="28" rx="8" fill="#b98a66"/>
+  <!-- 猫面具 -->
+  <g>
+    <path d="M52 44 L70 14 L84 38 Z" fill="#f2f0ea"/>
+    <path d="M148 44 L130 14 L116 38 Z" fill="#f2f0ea"/>
+    <path d="M58 42 L69 24 L78 39 Z" fill="#f2a0b5"/>
+    <path d="M142 42 L131 24 L122 39 Z" fill="#f2a0b5"/>
+    <ellipse cx="100" cy="86" rx="55" ry="52" fill="#f2f0ea"/>
+    <ellipse cx="100" cy="86" rx="55" ry="52" fill="none" stroke="#d8d4c8" stroke-width="2"/>
+    <!-- 眯眯眼 -->
+    <path d="M66 80 Q78 70 90 80" fill="none" stroke="#2a2630" stroke-width="4" stroke-linecap="round"/>
+    <path d="M110 80 Q122 70 134 80" fill="none" stroke="#2a2630" stroke-width="4" stroke-linecap="round"/>
+    <!-- 鼻嘴 -->
+    <path d="M95 96 Q100 102 105 96" fill="none" stroke="#e0708c" stroke-width="4" stroke-linecap="round"/>
+    <path d="M100 100 L100 106 M100 106 Q92 114 84 108 M100 106 Q108 114 116 108" fill="none" stroke="#2a2630" stroke-width="3" stroke-linecap="round"/>
+    <!-- 胡须 -->
+    <g stroke="#b8b4a8" stroke-width="2.5" stroke-linecap="round">
+      <path d="M40 84 L62 88"/><path d="M42 96 L62 96"/>
+      <path d="M160 84 L138 88"/><path d="M158 96 L138 96"/>
+    </g>
+    <!-- 面具后的头发 -->
+    <path d="M52 60 Q46 44 58 34 M148 60 Q154 44 142 34" fill="none" stroke="#14121c" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
