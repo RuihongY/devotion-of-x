@@ -195,7 +195,7 @@
     V.stageFocus.innerHTML = '<span class="art pop">' + v + "</span>";
   }
   // mood → 场景照片(双层交叉淡入 + Ken Burns)
-  const MOOD_BG = { street: 1, bank: 1, bar: 1, roof: 1, lib: 1, city: 1, house: 1, plaza: 1, reality: 1 };
+  const MOOD_BG = { street: 1, bank: 1, bar: 1, roof: 1, lib: 1, city: 1, house: 1, plaza: 1, reality: 1, home: 1, store: 1, study: 1 };
   let bgFlip = 0, bgShown = "";
   function setMood(m) {
     main.className = m ? "mood-" + m : "";
@@ -609,10 +609,10 @@
       G.meta.ms.ch2Intro = true;
       SAVE.save(G.meta);
       setPhase("scene");
-      setArt("🌙"); setMood("street");
+      setArt("🌙"); setMood("home");
       runScene("ch2_intro", renderMap);
     } else {
-      setArt("🌙"); setMood("street");
+      setArt("🌙"); setMood("home");
       runScene("night_open", renderMap);
     }
   }
@@ -646,7 +646,7 @@
       SAVE.save(G.meta);
       G.inReality = true;
       setPhase("scene");
-      setArt(act.art || "🏢"); setMood("reality");
+      setArt(act.art || "🏢"); setMood(act.mood || "reality");
       runScene(act.scene, null);
     } else {
       nextNight();
@@ -685,7 +685,7 @@
     SAVE.save(G.meta);
     G.inReality = true;
     setPhase("scene");
-    setArt(e.art || "🃏"); setMood("street");
+    setArt(e.art || "🃏"); setMood(e.mood || "street");
     runScene(e.scene, null);
   }
   window.endingCard = function (id) {

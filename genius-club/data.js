@@ -132,7 +132,7 @@ const TIMED_EVENTS = [
 /* ── 地点 ── */
 const LOCATIONS = {
   home: {
-    name: L("梦中公寓", "Dream Apartment"), icon: "🛏️", mood: "street",
+    name: L("梦中公寓", "Dream Apartment"), icon: "🛏️", mood: "home",
     desc: L("每晚梦境开始的地方。窗外是那座你闭着眼都能画出来的城市。",
       "Where the dream begins each night. Outside the window: the city you could draw with your eyes closed."),
     actions: [
@@ -162,7 +162,7 @@ const LOCATIONS = {
     ],
   },
   store: {
-    name: L("便利店", "Convenience Store"), icon: "🏪", mood: "street",
+    name: L("便利店", "Convenience Store"), icon: "🏪", mood: "store",
     desc: L("二十四小时营业。老板永远在柜台后打同一局手机游戏。",
       "Open 24 hours. The owner is forever behind the counter, playing the same round of the same phone game."),
     actions: [
@@ -293,6 +293,7 @@ const SCENES = {
     { t: L("一个满脸横肉的男人搂住你的肩膀。面具是只二次元猫,道上人称——大脸猫。\n今晚你心血来潮想换个剧本,就顺着他之前认错人的话头应了下来。",
         "A heavyset man throws an arm around your shoulder. The mask is a cartoon cat; the street calls him Bigface.\nTonight you feel like a different script, so you play along with his mistaken identity.") },
     { art: "🏦" },
+    { mood: "bank" },
     { fx: "bang", t: L("银行后门。放风的小弟刚比出OK的手势——\n嘭!!大脸猫一枪把他放倒了。",
         "The bank's back door. The lookout flashes an OK sign —\nBANG!! Bigface drops him with one shot.") },
     { who: L("大脸猫", "Bigface"), t: L("这人手脚不干净,留不得!少个人分钱,你该高兴啊老弟!",
@@ -735,6 +736,7 @@ const SCENES = {
     { t: L("【第二章 · 新东海市】\n拿到请柬的那一夜之后,你在梦里做的第一件事,是回到金库。",
         "[Chapter 2 · New Donghai City]\nAfter the night you claimed the invitation, the first thing you do in the dream is return to the vault.") },
     { art: "✉️" },
+    { mood: "bank" },
     { t: L("同一组密码。咔哒。\n请柬还躺在原处——但这一次,你注意到了别的东西:箱底的衬板,有一角微微翘起。",
         "The same code. Click.\nThe invitation lies where it lay — but this time you notice something else: one corner of the base panel, ever so slightly lifted.") },
     { fx: "reveal", fxArg: "img:photo", t: L("夹层里是一张老照片。\n长发、大胡子的中年男人,站在一面写满公式的白板前。照片背面,只有两个字母:\nVV。",
@@ -822,6 +824,7 @@ const SCENES = {
 
     { label: "x2" },
     { art: "🏙️" },
+    { mood: "city" },
     { t: L("“我爸……真的在里面?”\n大脸猫的声音在发抖。这个敢拿枪顶着银行金库的男人,手心全是汗。",
         "“My dad… he's really in there?”\nBigface's voice is shaking. The man who'd put a gun to a bank vault has palms slick with sweat.") },
     { t: L("CC领着你们绕开巡逻,停在“学术交流中心”后侧的一扇矮窗外。\n窗内是一间起居室。白板,42,还有——一个伏在桌上写字的老人。",
@@ -1008,14 +1011,14 @@ const SCENES = {
 const REALITY = [
   { scene: "r0", art: "🏢", unlock: (G) => true },
   { scene: "r1", art: "🖊️", unlock: (G) => hasClue("c15") },
-  { scene: "r2", art: "📕", unlock: (G) => hasClue("c04") },
-  { scene: "r3", art: "🔧", unlock: (G) => hasClue("c06") },
-  { scene: "r4", art: "🌀", unlock: (G) => hasClue("c09") },
+  { scene: "r2", art: "📕", mood: "study", unlock: (G) => hasClue("c04") },
+  { scene: "r3", art: "🔧", mood: "study", unlock: (G) => hasClue("c06") },
+  { scene: "r4", art: "🌀", mood: "study", unlock: (G) => hasClue("c09") },
   { scene: "r5", art: "✉️", unlock: (G) => !!G.meta.ms.invite },
   /* —— 第二章 —— */
   { scene: "a1", art: "🏥", unlock: (G) => G.meta.chapter >= 2 },
   { scene: "a2", art: "🏢", unlock: (G) => G.meta.chapter >= 2 && hasClue("d06") },
-  { scene: "a3", art: "🪞", unlock: (G) => G.meta.chapter >= 2 && hasClue("d08") },
+  { scene: "a3", art: "🪞", mood: "study", unlock: (G) => G.meta.chapter >= 2 && hasClue("d08") },
 ];
 
 /* ── 下一步提示(按主线链缺口,醒来结算卡上显示) ── */
@@ -1053,25 +1056,25 @@ function nextHint(G) {
 /* ── 结局(顺序即优先级) ── */
 const ENDINGS = [
   /* 第二章 · 章节结局 */
-  { id: "X2", title: L("父与子", "Father and Son"), scene: "ending_x2", art: "🎭",
+  { id: "X2", title: L("父与子", "Father and Son"), scene: "ending_x2", art: "🎭", mood: "bar",
     cond: (G) => CH(G) >= 2 && !!G.meta.ms.fatherSon,
     chapterEnd: L("第二章 · 完\n第三章 · 敬请期待", "End of Chapter 2\nChapter 3 · Coming soon"),
     epitaph: L("高墙锁得住一个人,锁不住一声“爸”。", "A wall can hold a man. It cannot hold the word “Dad.”") },
-  { id: "X1", title: L("城中之城", "The City Within"), scene: "ending_x1", art: "🏙️",
+  { id: "X1", title: L("城中之城", "The City Within"), scene: "ending_x1", art: "🏙️", mood: "home",
     cond: (G) => CH(G) >= 2 && !!G.meta.ms.sneakSolo,
     chapterEnd: L("第二章 · 完\n第三章 · 敬请期待", "End of Chapter 2\nChapter 3 · Coming soon"),
     epitaph: L("墙内的声音,和你一模一样。", "The voice within the wall is exactly your own.") },
   /* 第一章 · 章节结局 */
-  { id: "E3", title: L("同行者", "Fellow Travelers"), scene: "ending_e3", art: "🎭",
+  { id: "E3", title: L("同行者", "Fellow Travelers"), scene: "ending_e3", art: "🎭", mood: "roof",
     cond: (G) => !!G.meta.ms.coopOpen,
     next: 2, chapterEnd: L("第一章 · 完", "End of Chapter 1"),
     epitaph: L("有些答案,一个人永远打不开。", "Some answers can never be opened alone.") },
-  { id: "E2", title: L("二六二四", "Twenty Six Twenty Four"), scene: "ending_e2", art: "✉️",
+  { id: "E2", title: L("二六二四", "Twenty Six Twenty Four"), scene: "ending_e2", art: "✉️", mood: "street",
     cond: (G) => !!G.meta.ms.invite && !!G.meta.ms.r5,
     next: 2, chapterEnd: L("第一章 · 完", "End of Chapter 1"),
     epitaph: L("梦是六百年后的未来。而未来,寄来了请柬。", "The dream is the future, six hundred years on. And the future has sent an invitation.") },
   /* 坏结局(可继续) */
-  { id: "E1", title: L("循环囚徒", "Prisoner of the Loop"), scene: "ending_e1", art: "💤",
+  { id: "E1", title: L("循环囚徒", "Prisoner of the Loop"), scene: "ending_e1", art: "💤", mood: "bank",
     cond: (G) => !!G.meta.ms.slacker && !G.meta.ms.invite && !G.meta.ms.coopOpen,
     epitaph: L("把无限当作躺平的理由,就永远只能重复这一天。", "Treat infinity as an excuse to coast, and this one day is all you will ever have.") },
 ];

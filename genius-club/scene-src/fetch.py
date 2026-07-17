@@ -38,6 +38,12 @@ SCENES = {
               "office desks interior", "office interior"], "warm"),
   "title":  (["city skyline night long exposure", "night city panorama lights",
               "cityscape night lights", "city night"], "cold"),
+  "home":   (["small bedroom apartment interior", "student room bed desk interior",
+              "simple bedroom interior window", "small room bed interior"], "cold"),
+  "store":  (["convenience store interior shelves", "convenience store interior night",
+              "small shop interior shelves", "convenience store"], "cold"),
+  "study":  (["desk lamp books night room", "study desk lamp warm light",
+              "home office desk lamp night", "desk lamp night"], "warm"),
 }
 
 # tone -> (brightness, saturation, tint RGB, tint alpha)

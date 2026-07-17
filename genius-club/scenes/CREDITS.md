@@ -14,3 +14,6 @@ license. Please honor the license terms if you reuse them.
 - **plaza** — The Montréal Clock Tower at sunrise.jpg · Michael Vesia · CC BY-SA 3.0 · <https://commons.wikimedia.org/wiki/File:The_Montr%C3%A9al_Clock_Tower_at_sunrise.jpg>
 - **reality** — Planned Office Interiors black van, Malpas, Newport - geograph.org.uk - 6770617.jpg · Jaggery · CC BY-SA 2.0 · <https://commons.wikimedia.org/wiki/File:Planned_Office_Interiors_black_van,_Malpas,_Newport_-_geograph.org.uk_-_6770617.jpg>
 - **title** — Édifice Price at night, Quebec city, Canada.jpg · Wilfredor · CC0 · <https://commons.wikimedia.org/wiki/File:%C3%89difice_Price_at_night,_Quebec_city,_Canada.jpg>
+- **home** — Bedroom with marine puzzles on wall.jpg · aismallard · CC BY-SA 3.0 · <https://commons.wikimedia.org/wiki/File:Bedroom_with_marine_puzzles_on_wall.jpg>
+- **store** — Very common easy and fresh to pick up something quick at convenience stores in Japan (14870984321).jpg · amanderson2 · CC BY 2.0 · <https://commons.wikimedia.org/wiki/File:Very_common_easy_and_fresh_to_pick_up_something_quick_at_convenience_stores_in_Japan_(14870984321).jpg>
+- **study** — Vintage lamp and books (Unsplash).jpg · Jez Timms jeztimms · CC0 · <https://commons.wikimedia.org/wiki/File:Vintage_lamp_and_books_(Unsplash).jpg>
